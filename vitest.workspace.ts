@@ -7,6 +7,7 @@ export default defineWorkspace([
       globals: true,
       environment: 'node',
       include: ['src/**/*.spec.ts'], // Per D-02: .spec.ts suffix
+      exclude: ['**/third_parts/**', '**/node_modules/**', '**/dist/**'],
       coverage: {
         provider: 'v8',
         reporter: ['text', 'json', 'html'],
