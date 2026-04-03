@@ -1,16 +1,15 @@
 import js from '@eslint/js';
-import tsPlugin from '@typescript-eslint/eslint-plugin';
-import tsParser from '@typescript-eslint/parser';
+import tsEslint from 'typescript-eslint';
 import sheriff from '@softarc/eslint-plugin-sheriff';
 import importPlugin from 'eslint-plugin-import';
 import prettierConfig from 'eslint-config-prettier';
 
 export default [
   js.configs.recommended,
+  ...tsEslint.configs.recommended,
   {
     files: ['packages/**/*.ts'],
     languageOptions: {
-      parser: tsParser,
       parserOptions: {
         ecmaVersion: 2022,
         sourceType: 'module',
@@ -26,16 +25,11 @@ export default [
       },
     },
     plugins: {
-      '@typescript-eslint': tsPlugin,
       '@softarc/sheriff': sheriff,
       import: importPlugin,
     },
     rules: {
-      ...tsPlugin.configs.recommended.rules,
-      '@typescript-eslint/no-unused-vars': [
-        'error',
-        { argsIgnorePattern: '^_' },
-      ],
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/no-explicit-any': 'warn',
       'no-console': 'off',

@@ -4,3 +4,5 @@ pnpm-lock.yaml
 *.md
 .changeset/
 .husky/
+third_parts/
+.planning/
