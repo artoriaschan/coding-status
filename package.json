@@ -12,16 +12,27 @@
     "build": "pnpm -r build",
     "dev": "pnpm -r dev",
     "test": "pnpm -r test",
-    "lint": "pnpm -r lint",
-    "format": "pnpm -r format",
+    "lint": "pnpm lint:eslint && pnpm lint:sheriff",
+    "lint:eslint": "eslint packages/*/src/**/*.ts",
+    "lint:sheriff": "sheriff verify",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "changeset": "changeset",
     "version": "changeset version",
     "release": "pnpm build && changeset publish"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.0",
+    "@eslint/js": "^10.0.1",
+    "@softarc/eslint-plugin-sheriff": "^0.19.6",
+    "@softarc/sheriff-core": "^0.19.6",
     "@types/node": "^20.11.0",
-    "typescript": "^5.4.5"
+    "eslint": "^10.1.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-import": "^2.31.0",
+    "prettier": "^3.8.1",
+    "typescript": "^5.4.5",
+    "typescript-eslint": "^8.28.0"
   },
   "keywords": [
     "claude-code",
