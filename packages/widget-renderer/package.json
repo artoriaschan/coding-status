@@ -1,0 +1,32 @@
+{
+  "name": "@cdps/widget-renderer",
+  "version": "0.0.1",
+  "description": "CDPS Widget rendering library - statusline widget components",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "pnpm build"
+  },
+  "dependencies": {
+    "chalk": "^5.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "^5.4.2"
+  },
+  "keywords": [
+    "cdps",
+    "widget",
+    "renderer",
+    "statusline"
+  ],
+  "license": "MIT"
+}
