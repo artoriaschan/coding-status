@@ -18,7 +18,7 @@
   "dependencies": {
     "@cdps/widget-renderer": "workspace:*",
     "@alicloud/cms20190101": "^2.0.0",
-    "@alicloud/openapi-client": "^0.5.0"
+    "@alicloud/openapi-client": "^0.4.0"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
