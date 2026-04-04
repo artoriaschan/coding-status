@@ -47,7 +47,6 @@ import { loadSettings, renderStatusLine, setPlainMode } from '@cdps/widget-rende
 import { AdapterLoader } from '../adapters/loader.js';
 import { withTimeout, TimeoutError, STATUSLINE_TIMEOUT_MS } from '../utils/index.js';
 import type { UsageAdapter, UsageDimension, Settings } from '@cdps/widget-renderer';
-import type { Provider } from '../config/index.js';
 
 describe('registerStatusline', () => {
   let stdoutWriteSpy: ReturnType<typeof vi.spyOn>;
