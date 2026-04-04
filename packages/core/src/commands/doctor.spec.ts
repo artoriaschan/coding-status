@@ -105,7 +105,7 @@ describe('registerDoctor', () => {
     await doctorCommand?.parseAsync([], { from: 'user' });
 
     // Assert - check that green OK message is displayed
-    const output = consoleLogSpy.mock.calls.map((call) => call.join(' ')).join('\n');
+    const output = consoleLogSpy.mock.calls.map((call: unknown[]) => call.join(' ')).join('\n');
     expect(output).toContain(chalk.green('Config structure: OK'));
   });
 
@@ -151,7 +151,7 @@ describe('registerDoctor', () => {
     await doctorCommand?.parseAsync([], { from: 'user' });
 
     // Assert - check provider status output
-    const output = consoleLogSpy.mock.calls.map((call) => call.join(' ')).join('\n');
+    const output = consoleLogSpy.mock.calls.map((call: unknown[]) => call.join(' ')).join('\n');
     expect(output).toContain('test-provider');
     expect(output).toContain('bailian');
     expect(output).toContain('@cdps/usage-adapter-bailian');
@@ -187,7 +187,7 @@ describe('registerDoctor', () => {
     await doctorCommand?.parseAsync([], { from: 'user' });
 
     // Assert - check summary output
-    const output = consoleLogSpy.mock.calls.map((call) => call.join(' ')).join('\n');
+    const output = consoleLogSpy.mock.calls.map((call: unknown[]) => call.join(' ')).join('\n');
     expect(output).toContain(chalk.green('All checks passed.'));
   });
 
@@ -220,7 +220,7 @@ describe('registerDoctor', () => {
     await doctorCommand?.parseAsync([], { from: 'user' });
 
     // Assert - check current provider marked
-    const output = consoleLogSpy.mock.calls.map((call) => call.join(' ')).join('\n');
+    const output = consoleLogSpy.mock.calls.map((call: unknown[]) => call.join(' ')).join('\n');
     expect(output).toContain(chalk.cyan('(current)'));
   });
 
@@ -247,7 +247,7 @@ describe('registerDoctor', () => {
     await doctorCommand?.parseAsync([], { from: 'user' });
 
     // Assert - check missing credentials indicator
-    const output = consoleLogSpy.mock.calls.map((call) => call.join(' ')).join('\n');
+    const output = consoleLogSpy.mock.calls.map((call: unknown[]) => call.join(' ')).join('\n');
     expect(output).toContain('missing');
   });
 });

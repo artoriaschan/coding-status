@@ -122,7 +122,7 @@ describe('registerList', () => {
     await listCommand?.parseAsync([], { from: 'user' });
 
     // Assert - check that provider name and type are displayed
-    const output = consoleLogSpy.mock.calls.map((call) => call.join(' ')).join('\n');
+    const output = consoleLogSpy.mock.calls.map((call: unknown[]) => call.join(' ')).join('\n');
     expect(output).toContain('my-bailian');
     expect(output).toContain('bailian');
   });
@@ -156,7 +156,7 @@ describe('registerList', () => {
     await listCommand?.parseAsync([], { from: 'user' });
 
     // Assert
-    const output = consoleLogSpy.mock.calls.map((call) => call.join(' ')).join('\n');
+    const output = consoleLogSpy.mock.calls.map((call: unknown[]) => call.join(' ')).join('\n');
     expect(output).toContain('current');
   });
 
@@ -184,7 +184,7 @@ describe('registerList', () => {
 
     // Assert - check that chalk.cyan was used for the current provider name
     // The output should contain ANSI codes for cyan color
-    const output = consoleLogSpy.mock.calls.map((call) => call.join(' ')).join('\n');
+    const output = consoleLogSpy.mock.calls.map((call: unknown[]) => call.join(' ')).join('\n');
     // chalk.cyan adds ANSI escape codes
     expect(output).toContain(chalk.cyan('highlighted-provider'));
   });
@@ -244,7 +244,7 @@ describe('registerList', () => {
     await listCommand?.parseAsync([], { from: 'user' });
 
     // Assert - check that bold "Providers:" is shown
-    const output = consoleLogSpy.mock.calls.map((call) => call.join(' ')).join('\n');
+    const output = consoleLogSpy.mock.calls.map((call: unknown[]) => call.join(' ')).join('\n');
     expect(output).toContain(chalk.bold('Providers:'));
   });
 });

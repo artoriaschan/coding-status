@@ -53,6 +53,7 @@ export function registerAdd(program: Command): void {
           if (config.providers.some((p) => p.name === trimmed)) {
             return 'Provider name already exists';
           }
+          return undefined;
         },
       });
 
@@ -67,6 +68,7 @@ export function registerAdd(program: Command): void {
         placeholder: 'LTAI...',
         validate: (value) => {
           if (!value.trim()) return 'AccessKey ID is required';
+          return undefined;
         },
       });
 
@@ -79,6 +81,7 @@ export function registerAdd(program: Command): void {
         message: 'AccessKey Secret',
         validate: (value) => {
           if (!value.trim()) return 'AccessKey Secret is required';
+          return undefined;
         },
       });
 

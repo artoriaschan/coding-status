@@ -181,13 +181,13 @@ describe('registerStatusline', () => {
 
     // Assert
     expect(renderStatusLine).toHaveBeenCalled();
-    // Verify the context passed has provider info
+    // Verify the context passed has correct RenderContext fields
     const callArgs = vi.mocked(renderStatusLine).mock.calls[0];
-    expect(callArgs[0].provider.name).toBe('my-provider');
-    expect(callArgs[0].provider.type).toBe('bailian');
+    expect(callArgs[0].activeProvider).toBe('my-provider');
+    expect(callArgs[0].providerDisplayName).toBe('my-provider');
   });
 
-  it('should pass null usage in context (Phase 3 stub)', async () => {
+  it('should pass empty usageData in context (Phase 3 stub)', async () => {
     // Arrange
     const program = new Command();
     registerStatusline(program);
@@ -196,8 +196,8 @@ describe('registerStatusline', () => {
     const statuslineCommand = program.commands.find((cmd) => cmd.name() === 'statusline');
     await statuslineCommand?.parseAsync([], { from: 'user' });
 
-    // Assert - usage should be null (no adapter data in Phase 3)
+    // Assert - usageData should be empty object (no adapter data in Phase 3)
     const callArgs = vi.mocked(renderStatusLine).mock.calls[0];
-    expect(callArgs[0].usage).toBeNull();
+    expect(callArgs[0].usageData).toEqual({});
   });
 });

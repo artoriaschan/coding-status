@@ -47,12 +47,13 @@ export function registerStatusline(program: Command): void {
       }
 
       // Stub context - no actual usage data until Phase 6
+      // Per RenderContext type definition in widget-renderer/src/types.ts
       const ctx: RenderContext = {
-        provider: {
-          name: currentProvider.name,
-          type: currentProvider.type,
-        },
-        usage: null, // No adapter data in Phase 3
+        activeProvider: currentProvider.name,
+        providerDisplayName: currentProvider.name,
+        dimensions: [], // No dimensions until Phase 6 adapter
+        usageData: {}, // No usage data until Phase 6 adapter
+        terminalWidth: 80, // Default terminal width
         settings,
       };
 
