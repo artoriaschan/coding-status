@@ -500,4 +500,257 @@ describe('registerStatusline', () => {
       );
     });
   });
+
+  // =============================================================================
+  // Integration Tests (Phase 6 Plan 03)
+  // =============================================================================
+
+  describe('integration', () => {
+    it('should complete full flow: load config -> load adapter -> fetch data -> render', async () => {
+      // Arrange - create mock loader that simulates real getAdapter behavior (calls init)
+      const initSpy = vi.fn().mockResolvedValue(undefined);
+      const getDimensionsSpy = vi.fn().mockResolvedValue([
+        { key: '5h', label: '5 Hours' },
+        { key: 'week', label: 'Weekly' },
+      ] as UsageDimension[]);
+      const getUsageSpy = vi.fn().mockImplementation(async (dim: string) => {
+        if (dim === '5h') return 100;
+        if (dim === 'week') return 500;
+        return 0;
+      });
+
+      const adapterWithSpies = {
+        name: 'bailian',
+        displayName: 'Aliyun Bailian',
+        init: initSpy,
+        getDimensions: getDimensionsSpy,
+        getUsage: getUsageSpy,
+      };
+
+      // Mock getAdapter to call init before returning (simulates real loader behavior)
+      const getAdapterMock = vi.fn().mockImplementation(async () => {
+        await adapterWithSpies.init();
+        return adapterWithSpies;
+      });
+
+      const mockLoader = {
+        getAdapter: getAdapterMock,
+        clearCache: vi.fn(),
+        getCachedAdapterNames: vi.fn().mockReturnValue([]),
+      };
+      vi.mocked(AdapterLoader.getInstance).mockReturnValue(mockLoader as unknown as AdapterLoader);
+
+      const program = new Command();
+      registerStatusline(program);
+
+      // Act
+      const statuslineCommand = program.commands.find((cmd) => cmd.name() === 'statusline');
+      await statuslineCommand?.parseAsync([], { from: 'user' });
+
+      // Assert - verify full flow was executed
+      expect(loadConfig).toHaveBeenCalled();
+      expect(AdapterLoader.getInstance).toHaveBeenCalled();
+      expect(initSpy).toHaveBeenCalled(); // init is called by loader
+      expect(getDimensionsSpy).toHaveBeenCalled();
+      expect(getUsageSpy).toHaveBeenCalled();
+      expect(renderStatusLine).toHaveBeenCalled();
+      expect(stdoutWriteSpy).toHaveBeenCalled();
+    });
+
+    it('should render with correct RenderContext structure', async () => {
+      // Arrange
+      const program = new Command();
+      registerStatusline(program);
+
+      // Act
+      const statuslineCommand = program.commands.find((cmd) => cmd.name() === 'statusline');
+      await statuslineCommand?.parseAsync([], { from: 'user' });
+
+      // Assert - verify RenderContext structure
+      const ctx = vi.mocked(renderStatusLine).mock.calls[0][0];
+      expect(ctx).toHaveProperty('activeProvider');
+      expect(ctx).toHaveProperty('providerDisplayName');
+      expect(ctx).toHaveProperty('dimensions');
+      expect(ctx).toHaveProperty('usageData');
+      expect(ctx).toHaveProperty('terminalWidth');
+      expect(ctx).toHaveProperty('settings');
+
+      // Verify dimensions have correct structure
+      expect(ctx.dimensions).toHaveLength(2);
+      expect(ctx.dimensions[0]).toHaveProperty('key');
+      expect(ctx.dimensions[0]).toHaveProperty('label');
+
+      // Verify usageData has correct keys
+      expect(ctx.usageData).toHaveProperty('5h');
+      expect(ctx.usageData).toHaveProperty('week');
+    });
+
+    it('should handle adapter returning empty dimensions', async () => {
+      // Arrange - create adapter with empty dimensions
+      const adapterWithEmptyDims = {
+        name: 'bailian',
+        displayName: 'Aliyun Bailian',
+        init: vi.fn().mockResolvedValue(undefined),
+        getDimensions: vi.fn().mockResolvedValue([]),
+        getUsage: vi.fn().mockResolvedValue(0),
+      };
+
+      const getAdapterMock = vi.fn().mockImplementation(async () => {
+        await adapterWithEmptyDims.init();
+        return adapterWithEmptyDims;
+      });
+
+      const mockLoader = {
+        getAdapter: getAdapterMock,
+        clearCache: vi.fn(),
+        getCachedAdapterNames: vi.fn().mockReturnValue([]),
+      };
+      vi.mocked(AdapterLoader.getInstance).mockReturnValue(mockLoader as unknown as AdapterLoader);
+
+      const program = new Command();
+      registerStatusline(program);
+
+      // Act
+      const statuslineCommand = program.commands.find((cmd) => cmd.name() === 'statusline');
+      await statuslineCommand?.parseAsync([], { from: 'user' });
+
+      // Assert - should still render with empty dimensions
+      expect(renderStatusLine).toHaveBeenCalledWith(
+        expect.objectContaining({
+          dimensions: [],
+          usageData: {},
+        }),
+        expect.anything()
+      );
+    });
+
+    it('should pass adapter displayName to context', async () => {
+      // Arrange - create adapter with custom displayName
+      const adapterWithCustomName = {
+        name: 'bailian',
+        displayName: 'Custom Provider Display',
+        init: vi.fn().mockResolvedValue(undefined),
+        getDimensions: vi.fn().mockResolvedValue([
+          { key: '5h', label: '5 Hours' },
+        ] as UsageDimension[]),
+        getUsage: vi.fn().mockResolvedValue(100),
+      };
+
+      const getAdapterMock = vi.fn().mockImplementation(async () => {
+        await adapterWithCustomName.init();
+        return adapterWithCustomName;
+      });
+
+      const mockLoader = {
+        getAdapter: getAdapterMock,
+        clearCache: vi.fn(),
+        getCachedAdapterNames: vi.fn().mockReturnValue([]),
+      };
+      vi.mocked(AdapterLoader.getInstance).mockReturnValue(mockLoader as unknown as AdapterLoader);
+
+      const program = new Command();
+      registerStatusline(program);
+
+      // Act
+      const statuslineCommand = program.commands.find((cmd) => cmd.name() === 'statusline');
+      await statuslineCommand?.parseAsync([], { from: 'user' });
+
+      // Assert
+      expect(renderStatusLine).toHaveBeenCalledWith(
+        expect.objectContaining({
+          providerDisplayName: 'Custom Provider Display',
+        }),
+        expect.anything()
+      );
+    });
+
+    it('should handle three dimensions (5h, week, month)', async () => {
+      // Arrange - mock three dimensions like Bailian adapter
+      const adapterWithThreeDims = {
+        name: 'bailian',
+        displayName: 'Aliyun Bailian',
+        init: vi.fn().mockResolvedValue(undefined),
+        getDimensions: vi.fn().mockResolvedValue([
+          { key: '5h', label: '5 Hours', category: 'usage' },
+          { key: 'week', label: 'Weekly', category: 'usage' },
+          { key: 'month', label: 'Monthly', category: 'usage' },
+        ] as UsageDimension[]),
+        getUsage: vi.fn().mockImplementation(async (dim: string) => {
+          const values: Record<string, number> = { '5h': 1000, 'week': 5000, 'month': 15000 };
+          return values[dim] ?? 0;
+        }),
+      };
+
+      const getAdapterMock = vi.fn().mockImplementation(async () => {
+        await adapterWithThreeDims.init();
+        return adapterWithThreeDims;
+      });
+
+      const mockLoader = {
+        getAdapter: getAdapterMock,
+        clearCache: vi.fn(),
+        getCachedAdapterNames: vi.fn().mockReturnValue([]),
+      };
+      vi.mocked(AdapterLoader.getInstance).mockReturnValue(mockLoader as unknown as AdapterLoader);
+
+      const program = new Command();
+      registerStatusline(program);
+
+      // Act
+      const statuslineCommand = program.commands.find((cmd) => cmd.name() === 'statusline');
+      await statuslineCommand?.parseAsync([], { from: 'user' });
+
+      // Assert
+      expect(renderStatusLine).toHaveBeenCalledWith(
+        expect.objectContaining({
+          dimensions: expect.arrayContaining([
+            expect.objectContaining({ key: '5h' }),
+            expect.objectContaining({ key: 'week' }),
+            expect.objectContaining({ key: 'month' }),
+          ]),
+          usageData: { '5h': 1000, 'week': 5000, 'month': 15000 },
+        }),
+        expect.anything()
+      );
+    });
+  });
+
+  // =============================================================================
+  // Execution Timing Tests (STAT-02)
+  // =============================================================================
+
+  describe('execution timing', () => {
+    it('should complete within 1 second with successful adapter', async () => {
+      // Arrange - fast mock adapter
+      const program = new Command();
+      registerStatusline(program);
+
+      // Act
+      const start = Date.now();
+      const statuslineCommand = program.commands.find((cmd) => cmd.name() === 'statusline');
+      await statuslineCommand?.parseAsync([], { from: 'user' });
+      const elapsed = Date.now() - start;
+
+      // Assert - STAT-02: execution should be fast (< 1000ms)
+      // Note: mock operations are instant, so elapsed should be very small
+      expect(elapsed).toBeLessThan(1000);
+    });
+
+    it('should respect timeout wrapper even on fast execution', async () => {
+      // Arrange
+      const program = new Command();
+      registerStatusline(program);
+
+      // Act
+      const statuslineCommand = program.commands.find((cmd) => cmd.name() === 'statusline');
+      await statuslineCommand?.parseAsync([], { from: 'user' });
+
+      // Assert - withTimeout should be called with 1000ms timeout
+      expect(withTimeout).toHaveBeenCalledWith(
+        expect.any(Promise),
+        1000, // STATUSLINE_TIMEOUT_MS
+        'Statusline execution'
+      );
+    });
+  });
 });
