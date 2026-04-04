@@ -237,6 +237,82 @@ describe('Widget interface', () => {
   });
 });
 
+describe('UsageAdapter interface', () => {
+  it('can be implemented with all required methods', () => {
+    const mockAdapter: UsageAdapter = {
+      name: 'mock',
+      displayName: 'Mock Adapter',
+      async init(_credentials: Record<string, string>): Promise<void> {},
+      async getDimensions(): Promise<UsageDimension[]> {
+        return [{ key: '5h', label: '5 Hours' }];
+      },
+      async getUsage(_dimension: string): Promise<number> {
+        return 100;
+      },
+    };
+    expect(mockAdapter.name).toBe('mock');
+    expect(mockAdapter.displayName).toBe('Mock Adapter');
+  });
+
+  it('has readonly name property', () => {
+    const adapter: UsageAdapter = {
+      name: 'test',
+      displayName: 'Test',
+      async init(): Promise<void> {},
+      async getDimensions(): Promise<UsageDimension[]> { return []; },
+      async getUsage(): Promise<number> { return 0; },
+    };
+    // readonly is compile-time only, verify the value exists
+    expect(adapter.name).toBe('test');
+  });
+
+  it('init method returns Promise<void>', async () => {
+    const adapter: UsageAdapter = {
+      name: 'test',
+      displayName: 'Test',
+      async init(): Promise<void> {},
+      async getDimensions(): Promise<UsageDimension[]> { return []; },
+      async getUsage(): Promise<number> { return 0; },
+    };
+    const result = await adapter.init({});
+    expect(result).toBeUndefined();
+  });
+
+  it('getDimensions returns UsageDimension array', async () => {
+    const adapter: UsageAdapter = {
+      name: 'test',
+      displayName: 'Test',
+      async init(): Promise<void> {},
+      async getDimensions(): Promise<UsageDimension[]> {
+        return [
+          { key: '5h', label: '5 Hours', category: 'usage' },
+          { key: 'balance', label: 'Balance', category: 'balance' },
+        ];
+      },
+      async getUsage(): Promise<number> { return 0; },
+    };
+    const dimensions = await adapter.getDimensions();
+    expect(dimensions.length).toBe(2);
+    expect(dimensions[0].category).toBe('usage');
+    expect(dimensions[1].category).toBe('balance');
+  });
+
+  it('getUsage returns Promise<number>', async () => {
+    const adapter: UsageAdapter = {
+      name: 'test',
+      displayName: 'Test',
+      async init(): Promise<void> {},
+      async getDimensions(): Promise<UsageDimension[]> { return []; },
+      async getUsage(_dimension: string): Promise<number> {
+        return 5000;
+      },
+    };
+    const usage = await adapter.getUsage('5h');
+    expect(usage).toBe(5000);
+    expect(typeof usage).toBe('number');
+  });
+});
+
 describe('WidgetSchema interface', () => {
   it('should have required id and meta fields', () => {
     const schema: WidgetSchema = {
