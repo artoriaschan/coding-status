@@ -9,14 +9,6 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { withTimeout, TimeoutError, STATUSLINE_TIMEOUT_MS } from './timeout.js';
 
 describe('withTimeout', () => {
-  beforeEach(() => {
-    vi.useFakeTimers();
-  });
-
-  afterEach(() => {
-    vi.useRealTimers();
-  });
-
   it('should resolve when promise completes before timeout', async () => {
     const fastPromise = Promise.resolve('success');
 
@@ -30,11 +22,7 @@ describe('withTimeout', () => {
       setTimeout(() => resolve('slow-result'), 200);
     });
 
-    const promise = withTimeout(slowPromise, 50, 'test-operation');
-
-    await vi.advanceTimersByTimeAsync(60);
-
-    await expect(promise).rejects.toThrow(TimeoutError);
+    await expect(withTimeout(slowPromise, 50, 'test-operation')).rejects.toThrow(TimeoutError);
   });
 
   it('should include operation name in TimeoutError message', async () => {
@@ -42,13 +30,8 @@ describe('withTimeout', () => {
       setTimeout(() => resolve('slow-result'), 200);
     });
 
-    const promise = withTimeout(slowPromise, 50, 'fetch-data');
-
-    await vi.advanceTimersByTimeAsync(60);
-
     try {
-      await promise;
-      // Should not reach here
+      await withTimeout(slowPromise, 50, 'fetch-data');
       expect.fail('Expected TimeoutError');
     } catch (error) {
       expect(error).toBeInstanceOf(TimeoutError);
@@ -61,12 +44,8 @@ describe('withTimeout', () => {
       setTimeout(() => resolve('slow-result'), 200);
     });
 
-    const promise = withTimeout(slowPromise, 50, 'test-operation');
-
-    await vi.advanceTimersByTimeAsync(60);
-
     try {
-      await promise;
+      await withTimeout(slowPromise, 50, 'test-operation');
       expect.fail('Expected TimeoutError');
     } catch (error) {
       expect(error).toBeInstanceOf(TimeoutError);
@@ -75,50 +54,70 @@ describe('withTimeout', () => {
   });
 
   it('should clear timeout after resolution', async () => {
+    vi.useFakeTimers();
+
     const fastPromise = Promise.resolve('success');
 
     await withTimeout(fastPromise, 100, 'test-operation');
 
-    // Verify no pending timers
-    const pendingTimers = vi.getTimerCount();
-    expect(pendingTimers).toBe(0);
+    // Verify no pending timers after resolution
+    expect(vi.getTimerCount()).toBe(0);
+
+    vi.useRealTimers();
   });
 
   it('should clear timeout after rejection', async () => {
-    const slowPromise = new Promise((resolve) => {
-      setTimeout(() => resolve('slow-result'), 200);
+    vi.useFakeTimers();
+
+    // Use a promise that never resolves to test timeout cleanup
+    const neverResolvePromise = new Promise<never>(() => {
+      // Never resolves - intentionally hangs
     });
 
-    const promise = withTimeout(slowPromise, 50, 'test-operation');
+    const timeoutPromise = withTimeout(neverResolvePromise, 50, 'test-operation');
 
+    // Attach catch handler BEFORE advancing timers to avoid unhandled rejection
+    const catchPromise = timeoutPromise.catch(() => {
+      // Expected timeout error
+    });
+
+    // Advance timers past timeout
     await vi.advanceTimersByTimeAsync(60);
 
-    try {
-      await promise;
-    } catch {
-      // Expected timeout error
-    }
+    // Wait for the catch promise to complete
+    await catchPromise;
 
-    // Verify no pending timers after rejection
-    const pendingTimers = vi.getTimerCount();
-    expect(pendingTimers).toBe(0);
+    // Verify timeout timer was cleared
+    expect(vi.getTimerCount()).toBe(0);
+
+    vi.useRealTimers();
   });
 
   it('should work with AbortController abort signal', async () => {
-    const slowPromise = new Promise((resolve) => {
-      setTimeout(() => resolve('slow-result'), 200);
+    vi.useFakeTimers();
+
+    const neverResolvePromise = new Promise<never>(() => {
+      // Never resolves
     });
 
-    const promise = withTimeout(slowPromise, 50, 'test-operation');
+    const timeoutPromise = withTimeout(neverResolvePromise, 50, 'test-operation');
 
+    // Attach catch handler BEFORE advancing timers
+    let caughtError: Error | undefined;
+    const catchPromise = timeoutPromise.catch((error) => {
+      caughtError = error;
+    });
+
+    // Advance timers past timeout
     await vi.advanceTimersByTimeAsync(60);
 
-    try {
-      await promise;
-      expect.fail('Expected TimeoutError');
-    } catch (error) {
-      expect(error).toBeInstanceOf(TimeoutError);
-    }
+    // Wait for catch to complete
+    await catchPromise;
+
+    // Verify it's TimeoutError
+    expect(caughtError).toBeInstanceOf(TimeoutError);
+
+    vi.useRealTimers();
   });
 
   it('should preserve original promise rejection', async () => {
