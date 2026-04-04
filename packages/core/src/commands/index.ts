@@ -7,9 +7,10 @@
 // Init command
 export { registerInit } from './init.js';
 
+// Add command
+export { registerAdd } from './add.js';
+
 // Placeholder exports for commands to be implemented in later plans
-// These will be replaced with actual exports as commands are implemented
-// export { registerAdd } from './add.js';
 // export { registerList } from './list.js';
 // export { registerUse } from './use.js';
 // export { registerRm } from './rm.js';
