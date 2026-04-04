@@ -9,6 +9,9 @@
  * - Dynamically import CLI handler
  */
 
+// Export adapters module for external use
+export * from './adapters/index.js';
+
 // Force colors BEFORE any imports (chalk requires this)
 process.env.FORCE_COLOR = '1';
 
