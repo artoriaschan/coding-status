@@ -24,6 +24,17 @@ export type {
 // Constant exports
 export { VALID_COLORS, isValidColor } from './types.js';
 
+// Renderer exports
+export { renderStatusLine } from './renderer.js';
+
+// Settings loader exports
+export {
+  loadSettings,
+  saveSettings,
+  DEFAULT_SETTINGS,
+  SETTINGS_PATH,
+} from './settings.js';
+
 // Color utilities
 export {
   setPlainMode,
