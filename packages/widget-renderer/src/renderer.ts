@@ -5,7 +5,7 @@
  * Handles smart separator logic - removing leading, trailing, and consecutive separators.
  */
 
-import type { RenderContext, Settings, WidgetConfig } from './types.js';
+import type { RenderContext, Settings } from './types.js';
 import { BUILTIN_WIDGETS } from './widgets/index.js';
 import { setPlainMode } from './colors.js';
 
