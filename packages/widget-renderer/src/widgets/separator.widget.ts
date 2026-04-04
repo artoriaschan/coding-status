@@ -1,12 +1,20 @@
 /**
- * Separator widget stub
+ * Separator widget
  *
- * Placeholder implementation for separator widget.
- * Full implementation in Plan 02-04.
+ * Displays a separator character between widgets.
+ * Smart separator logic in the renderer handles skipping separators
+ * when adjacent widgets return empty content.
+ *
+ * @example
+ * { widget: 'separator' }  // Default: dim '│'
+ * { widget: 'separator', options: { text: '•' }, color: 'dim' }
  */
 
-import type { Widget, WidgetSchema } from '../types.js';
+import type { Widget, RenderContext, WidgetConfig, WidgetSchema } from '../types.js';
+import { colorize } from '../colors.js';
+import { getOption } from '../shared/widget.helper.js';
 
+/** Separator widget schema - defines all GUI metadata */
 export const SeparatorSchema: WidgetSchema = {
   id: 'separator',
   meta: {
@@ -16,13 +24,57 @@ export const SeparatorSchema: WidgetSchema = {
   },
   options: {
     content: { color: 'dim' },
+    custom: [
+      {
+        key: 'text',
+        type: 'select',
+        label: 'Separator Character',
+        options: [
+          { value: '|', label: '| (pipe)' },
+          { value: '│', label: '│ (box vertical)' },
+          { value: '•', label: '• (bullet)' },
+        ],
+        default: '│',
+      },
+      {
+        key: 'spaceBefore',
+        type: 'checkbox',
+        label: 'Space Before',
+        default: true,
+      },
+      {
+        key: 'spaceAfter',
+        type: 'checkbox',
+        label: 'Space After',
+        default: true,
+      },
+    ],
   },
 };
 
+/** Separator options type */
+interface SeparatorOptions {
+  text?: string;
+  spaceBefore?: boolean;
+  spaceAfter?: boolean;
+}
+
 export const SeparatorWidget: Widget = {
   name: 'separator',
-  render(): string | null {
-    // Stub - returns null until full implementation
-    return null;
+
+  render(_ctx: RenderContext, config?: WidgetConfig): string | null {
+    const opts = config?.options as SeparatorOptions | undefined;
+    const text = opts?.text ?? '│';
+    const spaceBefore = opts?.spaceBefore ?? true;
+    const spaceAfter = opts?.spaceAfter ?? true;
+
+    // Build output with spacing
+    let output = text;
+    if (spaceBefore) output = ' ' + output;
+    if (spaceAfter) output = output + ' ';
+
+    // Apply color (default to dim if not specified)
+    const color = config?.color ?? 'dim';
+    return colorize(output, color);
   },
 };
