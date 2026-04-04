@@ -24,6 +24,15 @@ export type {
 // Constant exports
 export { VALID_COLORS, isValidColor } from './types.js';
 
+// Color utilities
+export {
+  setPlainMode,
+  getChalkColor,
+  colorize,
+  createUsageBar,
+  type UsageBarOptions,
+} from './colors.js';
+
 // Widget registry exports
 export {
   BUILTIN_WIDGETS,
@@ -44,6 +53,9 @@ export {
   UsageWidget,
   UsageSchema,
 } from './widgets/index.js';
+
+// Shared helper exports
+export { getOption, renderWidgetWithLabel } from './shared/index.js';
 
 // Version placeholder
 export const version = '0.0.1';
