@@ -1,5 +1,23 @@
 #!/usr/bin/env node
+/**
+ * CDPS - Cloud provider usage statusline for Claude Code
+ *
+ * Bootstrap entry point.
+ *
+ * Per D-10 and RESEARCH.md Pattern 1:
+ * - Set FORCE_COLOR before any imports
+ * - Dynamically import CLI handler
+ */
 
-export const version = '0.0.1';
+// Force colors BEFORE any imports (chalk requires this)
+process.env.FORCE_COLOR = '1';
 
-console.log('Hello from cdps core');
+// Dynamic import ensures FORCE_COLOR is set first
+import('./cli.js')
+  .then(({ cli }) => {
+    cli(process.argv.slice(2));
+  })
+  .catch((error) => {
+    console.error('Failed to start CLI:', error);
+    process.exit(1);
+  });
