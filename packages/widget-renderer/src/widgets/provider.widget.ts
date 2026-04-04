@@ -1,28 +1,61 @@
 /**
- * Provider widget stub
+ * Provider widget
  *
- * Placeholder implementation for provider widget.
- * Full implementation in Plan 02-04.
+ * Displays the current cloud provider name from the context.
+ * Uses providerDisplayName with activeProvider as fallback.
+ *
+ * @example
+ * { widget: 'provider' }  // Default: cyan colored provider name
+ * { widget: 'provider', options: { label: 'Using' } }  // "Using: ProviderName"
  */
 
-import type { Widget, WidgetSchema } from '../types.js';
+import type { Widget, RenderContext, WidgetConfig, WidgetSchema } from '../types.js';
+import { colorize } from '../colors.js';
+import { getOption, renderWidgetWithLabel } from '../shared/widget.helper.js';
 
+/** Provider widget schema - defines all GUI metadata */
 export const ProviderSchema: WidgetSchema = {
   id: 'provider',
   meta: {
     displayName: 'Provider',
-    description: 'Current provider name',
-    category: 'limits',
+    description: 'Current cloud provider name',
+    category: 'info',
   },
   options: {
     content: { color: 'cyan' },
+    custom: [
+      {
+        key: 'label',
+        type: 'text',
+        label: 'Label',
+        default: '',
+        maxLength: 20,
+        placeholder: 'e.g., "Using"',
+      },
+      {
+        key: 'labelColor',
+        type: 'color',
+        label: 'Label Color',
+        default: 'dim',
+      },
+    ],
   },
 };
 
 export const ProviderWidget: Widget = {
   name: 'provider',
-  render(): string | null {
-    // Stub - returns null until full implementation
-    return null;
+
+  render(ctx: RenderContext, config?: WidgetConfig): string | null {
+    // Get display name with fallback to activeProvider (handle empty string too)
+    const displayName = ctx.providerDisplayName || ctx.activeProvider;
+
+    // Return null if no provider info available
+    if (!displayName) return null;
+
+    // Colorize the content
+    const content = colorize(displayName, config?.color ?? 'cyan');
+
+    // Apply optional label
+    return renderWidgetWithLabel(content, config, 'cyan');
   },
 };
