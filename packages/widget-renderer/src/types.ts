@@ -188,6 +188,48 @@ export interface Widget {
 }
 
 // =============================================================================
+// Adapter Interface Types
+// =============================================================================
+
+/**
+ * Usage adapter interface per D-19
+ *
+ * All provider adapters must implement this interface.
+ * Core methods: name, displayName, init, getDimensions, getUsage.
+ * No formatOutput - rendering stays in widget-renderer.
+ */
+export interface UsageAdapter {
+  /** Machine-readable adapter identifier (e.g., 'bailian') */
+  readonly name: string;
+
+  /** Human-readable display name (e.g., 'Aliyun Bailian') */
+  readonly displayName: string;
+
+  /**
+   * Initialize adapter with provider credentials.
+   * Validates credential structure and connectivity.
+   * @param credentials - Provider-specific credential object
+   * @throws Error if validation fails
+   */
+  init(credentials: Record<string, string>): Promise<void>;
+
+  /**
+   * Get available usage dimensions for this adapter.
+   * Each dimension includes category for rendering classification.
+   * @returns Array of UsageDimension objects
+   */
+  getDimensions(): Promise<UsageDimension[]>;
+
+  /**
+   * Fetch usage value for a specific dimension.
+   * @param dimension - Dimension key (e.g., '5h', 'week', 'month')
+   * @returns Usage value (e.g., call count)
+   * @throws Error if fetch fails
+   */
+  getUsage(dimension: string): Promise<number>;
+}
+
+// =============================================================================
 // Widget Schema Types
 // =============================================================================
 
