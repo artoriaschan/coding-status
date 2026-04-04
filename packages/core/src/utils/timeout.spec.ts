@@ -4,7 +4,7 @@
  * Tests timeout protection with AbortController pattern.
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 
 import { withTimeout, TimeoutError, STATUSLINE_TIMEOUT_MS } from './timeout.js';
 
