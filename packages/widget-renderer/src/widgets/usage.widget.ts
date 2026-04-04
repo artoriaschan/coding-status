@@ -10,7 +10,7 @@
  */
 
 import type { Widget, RenderContext, WidgetConfig, WidgetSchema, UsageBarColors } from '../types.js';
-import { colorize, createUsageBar } from '../colors.js';
+import { createUsageBar } from '../colors.js';
 import { getOption, renderWidgetWithLabel } from '../shared/widget.helper.js';
 
 /** Usage widget schema - defines all GUI metadata */

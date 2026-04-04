@@ -11,7 +11,7 @@
 
 import type { Widget, RenderContext, WidgetConfig, WidgetSchema } from '../types.js';
 import { colorize } from '../colors.js';
-import { getOption, renderWidgetWithLabel } from '../shared/widget.helper.js';
+import { renderWidgetWithLabel } from '../shared/widget.helper.js';
 
 /** Provider widget schema - defines all GUI metadata */
 export const ProviderSchema: WidgetSchema = {

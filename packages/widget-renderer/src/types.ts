@@ -209,6 +209,10 @@ export interface WidgetCustomOption {
   default?: unknown;
   /** Available choices for select type */
   options?: Array<{ value: string; label: string }>;
+  /** Maximum length for text input (text type) */
+  maxLength?: number;
+  /** Placeholder text for text input (text type) */
+  placeholder?: string;
 }
 
 /**

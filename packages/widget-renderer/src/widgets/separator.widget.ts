@@ -12,7 +12,6 @@
 
 import type { Widget, RenderContext, WidgetConfig, WidgetSchema } from '../types.js';
 import { colorize } from '../colors.js';
-import { getOption } from '../shared/widget.helper.js';
 
 /** Separator widget schema - defines all GUI metadata */
 export const SeparatorSchema: WidgetSchema = {

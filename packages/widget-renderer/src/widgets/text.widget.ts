@@ -35,11 +35,6 @@ export const TextSchema: WidgetSchema = {
   },
 };
 
-/** Text options type */
-interface TextOptions {
-  text?: string;
-}
-
 export const TextWidget: Widget = {
   name: 'text',
 
