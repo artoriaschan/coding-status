@@ -69,6 +69,12 @@ export interface UsageBarColors {
 }
 
 /**
+ * Usage adapter category for dimension classification
+ * Per D-21: extensible dimension categories for future dimensions
+ */
+export type DimensionCategory = 'usage' | 'balance' | 'concurrency' | 'other';
+
+/**
  * Usage dimension definition
  *
  * Describes a usage metric that adapters can provide.
@@ -83,6 +89,8 @@ export interface UsageDimension {
   description?: string;
   /** Optional maximum value for percentage calculation */
   maxValue?: number;
+  /** Category for rendering classification - default 'usage' */
+  category?: DimensionCategory;
 }
 
 // =============================================================================
