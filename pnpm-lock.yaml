@@ -90,6 +90,9 @@ importers:
       '@alicloud/openapi-core':
         specifier: ^1.0.0
         version: 1.0.7
+      '@cdps/core':
+        specifier: workspace:*
+        version: link:../core
       '@cdps/widget-renderer':
         specifier: workspace:*
         version: link:../widget-renderer

@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@cdps/widget-renderer": "workspace:*",
+    "@cdps/core": "workspace:*",
     "@alicloud/cms20190101": "^4.0.0",
     "@alicloud/openapi-core": "^1.0.0"
   },
