@@ -13,8 +13,10 @@ export { registerAdd } from './add.js';
 // List command
 export { registerList } from './list.js';
 
-// Placeholder exports for commands to be implemented in later plans
-// export { registerUse } from './use.js';
-// export { registerRm } from './rm.js';
+// Use command
+export { registerUse } from './use.js';
+
+// Rm command
+export { registerRm } from './rm.js';
 // export { registerDoctor } from './doctor.js';
 // export { registerStatusline } from './statusline.js';
