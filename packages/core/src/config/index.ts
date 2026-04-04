@@ -20,3 +20,6 @@ export {
 
 // Store operations
 export { loadConfig, saveConfig, getConfigDir } from './config-store.js';
+
+// Claude Code integration
+export { updateClaudeSettings, CLAUDE_SETTINGS_PATH } from './claude-settings.js';
