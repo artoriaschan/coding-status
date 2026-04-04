@@ -18,5 +18,9 @@ export { registerUse } from './use.js';
 
 // Rm command
 export { registerRm } from './rm.js';
-// export { registerDoctor } from './doctor.js';
-// export { registerStatusline } from './statusline.js';
+
+// Doctor command
+export { registerDoctor } from './doctor.js';
+
+// Statusline command
+export { registerStatusline } from './statusline.js';
