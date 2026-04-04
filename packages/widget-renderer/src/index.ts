@@ -19,6 +19,8 @@ export type {
   WidgetPreviewState,
   WidgetOptionsConfig,
   NaVisibility,
+  UsageAdapter,
+  DimensionCategory,
 } from './types.js';
 
 // Constant exports
