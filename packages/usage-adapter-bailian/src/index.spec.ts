@@ -51,10 +51,12 @@ vi.mock('@cdps/core', () => ({
 describe('BailianAdapter', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.resetAllMocks();
   });
 
   afterEach(() => {
     vi.clearAllMocks();
+    vi.resetAllMocks();
   });
 
   // Test 1: BailianAdapter.name === 'bailian'
@@ -77,6 +79,13 @@ describe('BailianAdapter', () => {
   it('should throw for missing accessKeySecret in init', async () => {
     const credentials = { accessKeyId: 'key', accessKeySecret: '' };
     await expect(BailianAdapter.init(credentials)).rejects.toThrow();
+  });
+
+  // Test 5: init throws AdapterInitError for invalid credentials
+  it('should throw AdapterInitError for invalid credentials', async () => {
+    const { AdapterInitError } = await import('@cdps/core');
+    const credentials = { accessKeyId: '', accessKeySecret: 'secret' };
+    await expect(BailianAdapter.init(credentials)).rejects.toThrow(AdapterInitError);
   });
 
   // Test 5: init() creates client and validates credentials
@@ -106,6 +115,21 @@ describe('BailianAdapter', () => {
   // Test 7: getUsage() throws if not initialized
   it('should throw if getUsage called before init', async () => {
     await expect(BailianAdapter.getUsage('5h')).rejects.toThrow();
+  });
+
+  // Test: getUsage throws for invalid dimension
+  it('should throw for invalid dimension', async () => {
+    const { createClient, fetchCallCount, withTimeout } = await import('./client.js');
+
+    const mockClient = { describeMetricListWithOptions: vi.fn() };
+    vi.mocked(createClient).mockResolvedValue(mockClient);
+    vi.mocked(fetchCallCount).mockResolvedValue(100);
+    vi.mocked(withTimeout).mockImplementation((p) => p);
+
+    const credentials = { accessKeyId: 'valid-key', accessKeySecret: 'valid-secret' };
+    await BailianAdapter.init(credentials);
+
+    await expect(BailianAdapter.getUsage('invalid')).rejects.toThrow('Invalid dimension');
   });
 
   // Test 8: getUsage() returns cached data if valid
@@ -266,7 +290,7 @@ describe('BailianAdapter', () => {
 
     const mockClient = { describeMetricListWithOptions: vi.fn() };
     vi.mocked(createClient).mockResolvedValue(mockClient);
-    vi.mocked(fetchCallCount).mockResolvedValue(100);
+    vi.mocked(fetchCallCount).mockResolvedValueOnce(100); // For init
     vi.mocked(withTimeout).mockImplementation((p) => p);
     vi.mocked(loadCache).mockResolvedValue({
       createdAt: Date.now() - 100000, // Stale cache
@@ -287,6 +311,65 @@ describe('BailianAdapter', () => {
     expect(usage).toBe(600);
   });
 
+  // Test: getUsage throws when API fails and no cache available
+  it('should throw when API fails and no cache available', async () => {
+    const { createClient, fetchCallCount, withTimeout } = await import('./client.js');
+    const { loadCache } = await import('./cache.js');
+    const { getCircuitBreaker } = await import('./circuit-breaker.js');
+    const { getTimeRange } = await import('./dimensions.js');
+
+    const mockRecordFailure = vi.fn();
+    const mockClient = { describeMetricListWithOptions: vi.fn() };
+    vi.mocked(createClient).mockResolvedValue(mockClient);
+    // First call (init) succeeds, second call (getUsage) fails
+    vi.mocked(fetchCallCount)
+      .mockResolvedValueOnce(100) // For init credential validation
+      .mockRejectedValueOnce(new Error('API error')); // For getUsage
+    vi.mocked(withTimeout).mockImplementation((p) => p);
+    // No cache available
+    vi.mocked(loadCache).mockResolvedValue(null);
+    vi.mocked(getCircuitBreaker).mockReturnValue({
+      checkCircuit: vi.fn().mockReturnValue('allow'),
+      recordSuccess: vi.fn(),
+      recordFailure: mockRecordFailure,
+      getProviderState: vi.fn(),
+      reset: vi.fn(),
+    } as unknown as ReturnType<typeof getCircuitBreaker>);
+    vi.mocked(getTimeRange).mockReturnValue({ startTimeMs: 1000, endTimeMs: 2000 });
+
+    const credentials = { accessKeyId: 'key', accessKeySecret: 'secret' };
+    await BailianAdapter.init(credentials);
+
+    // When API fails and no cache available, should throw
+    await expect(BailianAdapter.getUsage('5h')).rejects.toThrow();
+    expect(mockRecordFailure).toHaveBeenCalledWith('bailian');
+  });
+
+  // Test: getUsage throws if no cache and circuit is open
+  it('should throw if no cache and circuit is open', async () => {
+    const { createClient, fetchCallCount, withTimeout } = await import('./client.js');
+    const { loadCache } = await import('./cache.js');
+    const { getCircuitBreaker } = await import('./circuit-breaker.js');
+
+    const mockClient = { describeMetricListWithOptions: vi.fn() };
+    vi.mocked(createClient).mockResolvedValue(mockClient);
+    vi.mocked(fetchCallCount).mockResolvedValueOnce(100); // For init only
+    vi.mocked(withTimeout).mockImplementation((p) => p);
+    vi.mocked(loadCache).mockResolvedValue(null); // No cache
+    vi.mocked(getCircuitBreaker).mockReturnValue({
+      checkCircuit: vi.fn().mockReturnValue('reject'),
+      recordSuccess: vi.fn(),
+      recordFailure: vi.fn(),
+      getProviderState: vi.fn(),
+      reset: vi.fn(),
+    } as unknown as ReturnType<typeof getCircuitBreaker>);
+
+    const credentials = { accessKeyId: 'key', accessKeySecret: 'secret' };
+    await BailianAdapter.init(credentials);
+
+    await expect(BailianAdapter.getUsage('5h')).rejects.toThrow('Circuit breaker open');
+  });
+
   // Interface compliance tests
   it('should implement UsageAdapter interface', () => {
     const adapter: UsageAdapter = BailianAdapter;
@@ -297,26 +380,48 @@ describe('BailianAdapter', () => {
     expect(adapter.getUsage).toBeDefined();
   });
 
+  it('should have readonly name property', () => {
+    expect(BailianAdapter.name).toBe('bailian');
+    // TypeScript enforces readonly at compile time
+  });
+
+  it('should have readonly displayName property', () => {
+    expect(BailianAdapter.displayName).toBe('Aliyun Bailian');
+  });
+
   it('should have async init method', async () => {
     expect(BailianAdapter.init).toBeInstanceOf(Function);
-    // init({}) will reject due to missing credentials, but we just verify it returns a Promise
     const result = BailianAdapter.init({});
     expect(result).toBeInstanceOf(Promise);
-    // Catch the rejection to prevent unhandled error
     await result.catch(() => {});
   });
 
-  it('should have async getDimensions method', () => {
+  it('should have async getDimensions method', async () => {
     expect(BailianAdapter.getDimensions).toBeInstanceOf(Function);
     const result = BailianAdapter.getDimensions();
     expect(result).toBeInstanceOf(Promise);
+    const dimensions = await result;
+    expect(dimensions).toHaveLength(3);
   });
 
   it('should have async getUsage method', async () => {
     expect(BailianAdapter.getUsage).toBeInstanceOf(Function);
-    // getUsage will reject since not initialized, catch to prevent unhandled error
     const result = BailianAdapter.getUsage('5h');
     expect(result).toBeInstanceOf(Promise);
     await result.catch(() => {});
+  });
+
+  // Dimension key tests
+  it('should have correct dimension keys', async () => {
+    const dimensions = await BailianAdapter.getDimensions();
+    expect(dimensions[0].key).toBe('5h');
+    expect(dimensions[1].key).toBe('week');
+    expect(dimensions[2].key).toBe('month');
+  });
+
+  // Default export test
+  it('should be exported as default', () => {
+    expect(BailianAdapter).toBeDefined();
+    expect(BailianAdapter.name).toBe('bailian');
   });
 });
