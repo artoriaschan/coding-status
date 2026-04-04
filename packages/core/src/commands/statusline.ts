@@ -1,53 +1,63 @@
 /**
  * Statusline command implementation
  *
- * Per D-17: Claude Code executes `cdps statusline` to render usage
- * This is the primary output command that Claude Code calls.
+ * Per RESEARCH.md Open Questions:
+ * - Implement statusline command structure in Phase 3
+ * - Output placeholder until Phase 6 (adapter integration)
  */
 
 import { Command } from 'commander';
 
 import { loadConfig } from '../config/index.js';
+import {
+  loadSettings,
+  renderStatusLine,
+  type RenderContext,
+} from '@cdps/widget-renderer';
 
 /**
  * Register the statusline command with Commander program.
  *
- * Per D-17: Claude Code settings.json configures this command:
- * ```json
- * {
- *   "statusLine": {
- *     "type": "command",
- *     "command": "cdps statusline"
- *   }
- * }
- * ```
- *
- * Phase 3 stub: Outputs placeholder until Phase 5+6 (adapter + renderer integration).
+ * Per RESEARCH.md Open Questions:
+ * - Implement statusline command structure in Phase 3
+ * - Output placeholder until Phase 6 (adapter integration)
  *
  * @param program - Commander program instance
  */
 export function registerStatusline(program: Command): void {
   program
     .command('statusline')
-    .description('Render statusline output for Claude Code')
+    .description('Output statusline for Claude Code (Phase 6: full integration)')
     .action(async () => {
+      // Load config and settings
       const config = await loadConfig();
+      const settings = await loadSettings();
 
+      // Phase 3 stub: Output placeholder
+      // Phase 6: Full implementation with adapter loading and usage data
       if (!config.current) {
-        // No provider configured - output nothing
+        console.log('No provider configured. Run `cdps add` first.');
         return;
       }
 
-      // Phase 3 stub: Output placeholder text
-      // Actual implementation:
-      // 1. Load adapter for current provider (Phase 5)
-      // 2. Fetch usage data via adapter API (Phase 5)
-      // 3. Render via widget-renderer (Phase 6)
       const currentProvider = config.providers.find((p) => p.name === config.current);
-
-      if (currentProvider) {
-        // Stub output - shows provider name only
-        console.log(`${currentProvider.name}`);
+      if (!currentProvider) {
+        console.log('Current provider not found in config.');
+        return;
       }
+
+      // Stub context - no actual usage data until Phase 6
+      const ctx: RenderContext = {
+        provider: {
+          name: currentProvider.name,
+          type: currentProvider.type,
+        },
+        usage: null, // No adapter data in Phase 3
+        settings,
+      };
+
+      // Render and output
+      const output = renderStatusLine(ctx, settings);
+      console.log(output);
     });
 }
