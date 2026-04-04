@@ -17,6 +17,8 @@ import type {
   Widget,
   WidgetSchema,
   NaVisibility,
+  DimensionCategory,
+  UsageAdapter,
 } from './types.js';
 import { VALID_COLORS, isValidColor } from './types.js';
 
@@ -97,6 +99,44 @@ describe('UsageDimension interface', () => {
     };
     expect(dimension.description).toBe('Weekly usage');
     expect(dimension.maxValue).toBe(100000);
+  });
+});
+
+describe('DimensionCategory type', () => {
+  it('should accept all valid category values', () => {
+    const categories: DimensionCategory[] = ['usage', 'balance', 'concurrency', 'other'];
+    expect(categories).toContain('usage');
+    expect(categories).toContain('balance');
+    expect(categories).toContain('concurrency');
+    expect(categories).toContain('other');
+  });
+});
+
+describe('UsageDimension.category field', () => {
+  it('should work without category (optional field)', () => {
+    const dimension: UsageDimension = {
+      key: '5h',
+      label: '5 Hours',
+    };
+    expect(dimension.category).toBeUndefined();
+  });
+
+  it('should accept category: balance', () => {
+    const dimension: UsageDimension = {
+      key: 'balance',
+      label: 'Account Balance',
+      category: 'balance',
+    };
+    expect(dimension.category).toBe('balance');
+  });
+
+  it('should accept category: concurrency', () => {
+    const dimension: UsageDimension = {
+      key: 'concurrency',
+      label: 'Active Sessions',
+      category: 'concurrency',
+    };
+    expect(dimension.category).toBe('concurrency');
   });
 });
 
