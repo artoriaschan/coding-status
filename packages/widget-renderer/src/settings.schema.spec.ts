@@ -6,10 +6,8 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { z } from 'zod';
 
 import { SettingsSchema, WidgetTypeEnum, WidgetConfigSchema, ThemeSchema } from './settings.schema.js';
-import { VALID_COLORS } from './types.js';
 import { DEFAULT_SETTINGS } from './settings.js';
 
 describe('WidgetTypeEnum', () => {

@@ -11,7 +11,7 @@ import { z } from 'zod';
 import {
   formatZodError,
   formatJsonParseError,
-  FormattedError,
+  type FormattedError,
   getFixSuggestion,
 } from './error-formatter.js';
 

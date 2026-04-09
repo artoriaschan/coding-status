@@ -6,7 +6,7 @@
  */
 
 import chalk from 'chalk';
-import { z, type ZodError, type ZodIssue } from 'zod';
+import { type ZodError, type ZodIssue } from 'zod';
 
 // =============================================================================
 // Formatted Error Interface (D-07)
@@ -75,9 +75,6 @@ export function getFixSuggestion(issue: ZodIssue): string | undefined {
 
     case 'invalid_enum_value':
       return `Valid options: ${(issue.options as string[]).join(', ')}`;
-
-    case 'required':
-      return 'This field is required and cannot be empty';
 
     case 'custom':
       return 'Check the value meets the validation rules';

@@ -1,0 +1,111 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://cdps.dev/schemas/settings.schema.json",
+  "title": "CDPS Settings",
+  "description": "Widget layout settings for cdps statusline",
+  "$ref": "#/definitions/CDPSSettings",
+  "definitions": {
+    "CDPSSettings": {
+      "type": "object",
+      "properties": {
+        "cacheTtl": {
+          "type": "integer",
+          "exclusiveMinimum": 0,
+          "default": 300000
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "widget": {
+                  "type": "string",
+                  "enum": [
+                    "provider",
+                    "separator",
+                    "usage",
+                    "text"
+                  ]
+                },
+                "color": {
+                  "type": "string",
+                  "enum": [
+                    "black",
+                    "red",
+                    "green",
+                    "yellow",
+                    "blue",
+                    "magenta",
+                    "cyan",
+                    "white",
+                    "dim",
+                    "bold"
+                  ]
+                },
+                "colors": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "$ref": "#/definitions/CDPSSettings/properties/rows/items/items/properties/color"
+                  }
+                },
+                "options": {
+                  "type": "object",
+                  "additionalProperties": {}
+                }
+              },
+              "required": [
+                "widget"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "default": []
+        },
+        "theme": {
+          "type": "object",
+          "properties": {
+            "barColors": {
+              "type": "object",
+              "properties": {
+                "low": {
+                  "$ref": "#/definitions/CDPSSettings/properties/rows/items/items/properties/color"
+                },
+                "medium": {
+                  "$ref": "#/definitions/CDPSSettings/properties/rows/items/items/properties/color"
+                },
+                "high": {
+                  "$ref": "#/definitions/CDPSSettings/properties/rows/items/items/properties/color"
+                }
+              },
+              "additionalProperties": false
+            },
+            "thresholds": {
+              "type": "object",
+              "properties": {
+                "low": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "medium": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 100
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        "plain": {
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

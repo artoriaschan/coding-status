@@ -37,6 +37,15 @@ export {
   SETTINGS_PATH,
 } from './settings.js';
 
+// Settings schema exports (for JSON Schema generation)
+export {
+  SettingsSchema,
+  WidgetConfigSchema,
+  ThemeSchema,
+  WidgetTypeEnum,
+  type Theme,
+} from './settings.schema.js';
+
 // Color utilities
 export {
   setPlainMode,
