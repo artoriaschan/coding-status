@@ -6,6 +6,7 @@
  * - Adapter health validation deferred to Phase 5+
  * - Reports status for each provider
  * - Shows summary of providers checked
+ * - Enhanced validation with detailed error reporting (Plan 07-02)
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
@@ -249,5 +250,90 @@ describe('registerDoctor', () => {
     // Assert - check missing credentials indicator
     const output = consoleLogSpy.mock.calls.map((call: unknown[]) => call.join(' ')).join('\n');
     expect(output).toContain('missing');
+  });
+
+  // Enhanced validation tests (Plan 07-02)
+  describe('enhanced validation with detailed error reporting', () => {
+    it('Test 1: Doctor shows detailed field path when config is invalid', async () => {
+      // Arrange - invalid config with missing credentials
+      vi.mocked(loadConfig).mockResolvedValue({
+        providers: [
+          {
+            name: 'test-provider',
+            type: 'bailian',
+            packageName: '@cdps/usage-adapter-bailian',
+            // Missing credentials (required field)
+          },
+        ],
+        current: undefined,
+        cacheTtl: 300,
+      });
+
+      const program = new Command();
+      registerDoctor(program);
+
+      // Act
+      const doctorCommand = program.commands.find((cmd) => cmd.name() === 'doctor');
+      await doctorCommand?.parseAsync([], { from: 'user' });
+
+      // Assert - check for field path in output
+      const output = consoleLogSpy.mock.calls.map((call: unknown[]) => call.join(' ')).join('\n');
+      expect(output).toMatch(/providers\[0\]\.credentials/);
+    });
+
+    it('Test 2: Doctor shows error type in validation output', async () => {
+      // Arrange - invalid config with wrong type
+      vi.mocked(loadConfig).mockResolvedValue({
+        providers: [
+          {
+            name: 'test-provider',
+            type: 'bailian',
+            packageName: '@cdps/usage-adapter-bailian',
+            credentials: 'string-instead-of-object', // Wrong type
+          },
+        ],
+        current: undefined,
+        cacheTtl: 300,
+      });
+
+      const program = new Command();
+      registerDoctor(program);
+
+      // Act
+      const doctorCommand = program.commands.find((cmd) => cmd.name() === 'doctor');
+      await doctorCommand?.parseAsync([], { from: 'user' });
+
+      // Assert - check for error type in output
+      const output = consoleLogSpy.mock.calls.map((call: unknown[]) => call.join(' ')).join('\n');
+      expect(output).toMatch(/invalid_type/);
+    });
+
+    it('Test 3: Doctor shows fix suggestion for credentials errors', async () => {
+      // Arrange - missing credentials
+      vi.mocked(loadConfig).mockResolvedValue({
+        providers: [
+          {
+            name: 'test-provider',
+            type: 'bailian',
+            packageName: '@cdps/usage-adapter-bailian',
+            // Missing credentials
+          },
+        ],
+        current: undefined,
+        cacheTtl: 300,
+      });
+
+      const program = new Command();
+      registerDoctor(program);
+
+      // Act
+      const doctorCommand = program.commands.find((cmd) => cmd.name() === 'doctor');
+      await doctorCommand?.parseAsync([], { from: 'user' });
+
+      // Assert - check for suggestion about credentials
+      const output = consoleLogSpy.mock.calls.map((call: unknown[]) => call.join(' ')).join('\n');
+      expect(output).toMatch(/credentials/i);
+      expect(output).toMatch(/accessKeyId|accessKeySecret/i);
+    });
   });
 });

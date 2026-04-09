@@ -103,8 +103,12 @@ export function formatZodError(error: ZodError, context: string): string[] {
 
   // Process each ZodIssue
   for (const issue of error.errors) {
-    // Field path (D-07)
-    const fieldPath = issue.path.map((p) => p).join('.');
+    // Field path (D-07) - use bracket notation for array indices
+    const fieldPath = issue.path
+      .map((p) => typeof p === 'number' ? `[${p}]` : p)
+      .join('.')
+      // Fix double dots from bracket notation
+      .replace(/\.\[/g, '[');
     const formattedPath = fieldPath || '(root)';
 
     // Error type and message

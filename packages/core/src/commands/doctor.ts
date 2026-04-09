@@ -5,12 +5,15 @@
  * - Check config structure only in Phase 3
  * - Adapter health validation in Phase 5+
  * - Report status for each provider
+ * - Enhanced validation with detailed error reporting (Plan 07-02)
  */
 
 import chalk from 'chalk';
 import { Command } from 'commander';
+import { ZodError } from 'zod';
 
 import { loadConfig, ConfigSchema } from '../config/index.js';
+import { formatZodError } from '../config/error-formatter.js';
 
 /**
  * Register the doctor command with Commander program.
@@ -26,7 +29,8 @@ export function registerDoctor(program: Command): void {
   program
     .command('doctor')
     .description('Validate provider configurations')
-    .action(async () => {
+    .option('--strict', 'Enable strict validation mode')
+    .action(async (options: { strict?: boolean }) => {
       console.log('Running diagnostics...\n');
 
       // Load and validate config structure
@@ -37,8 +41,21 @@ export function registerDoctor(program: Command): void {
         console.log(chalk.green('Config structure: OK'));
       } catch (error) {
         console.log(chalk.red('Config structure: INVALID'));
-        console.log(error instanceof Error ? error.message : String(error));
-        return;
+
+        if (error instanceof ZodError) {
+          // Use enhanced error formatter for detailed output (Plan 07-02)
+          const errorLines = formatZodError(error, 'Config');
+          for (const line of errorLines) {
+            console.log(line);
+          }
+        } else {
+          console.log(error instanceof Error ? error.message : String(error));
+        }
+
+        // In strict mode, exit early on validation error
+        if (options.strict) {
+          return;
+        }
       }
 
       // Check providers
@@ -59,7 +76,7 @@ export function registerDoctor(program: Command): void {
         console.log(`  ${chalk.green('OK')} ${provider.name}${currentMark} [${provider.type}]`);
         console.log(`    Package: ${provider.packageName}`);
         console.log(
-          `    Credentials: ${provider.credentials.accessKeyId ? 'configured' : 'missing'}`
+          `    Credentials: ${provider.credentials?.accessKeyId ? 'configured' : 'missing'}`
         );
       }
 
