@@ -35,7 +35,7 @@
 npm install -g cdps
 ```
 
-需要 Node.js >= 18.0.0
+需要 Node.js >= 20.12.0
 
 ## 快速开始
 
@@ -177,7 +177,7 @@ rm -rf ~/.cdps/cache/
 
 ### 环境要求
 
-- Node.js >= 18.0.0
+- Node.js >= 20.12.0
 - pnpm >= 9.x
 
 ### 初始化
@@ -286,7 +286,7 @@ pnpm release    # 发布到 npm
 
 ## 环境要求
 
-- Node.js >= 18.0.0
+- Node.js >= 20.12.0
 - Claude Code CLI（用于状态栏集成）
 - 阿里云账号并开通百炼服务（用于用量数据）
 

@@ -35,7 +35,7 @@ Display real-time cloud AI service usage directly in your Claude Code statusline
 npm install -g cdps
 ```
 
-Requires Node.js >= 18.0.0
+Requires Node.js >= 20.12.0
 
 ## Quick Start
 
@@ -177,7 +177,7 @@ rm -rf ~/.cdps/cache/
 
 ### Prerequisites
 
-- Node.js >= 18.0.0
+- Node.js >= 20.12.0
 - pnpm >= 9.x
 
 ### Setup
@@ -286,7 +286,7 @@ pnpm release    # Publish to npm
 
 ## Requirements
 
-- Node.js >= 18.0.0
+- Node.js >= 20.12.0
 - Claude Code CLI (for statusline integration)
 - Aliyun account with Bailian service (for usage data)
 
