@@ -2,6 +2,8 @@
 
 Cloud provider usage statusline for Claude Code CLI
 
+English | [简体中文](README.zh-CN.md)
+
 [![npm version](https://badge.fury.io/js/cdps.svg)](https://www.npmjs.com/package/cdps)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
