@@ -1,11 +1,23 @@
 # cdps
 
-Claude Code CLI 的云供应商用量状态栏工具
+<p align="center">
+  <strong>Claude Code CLI 的云供应商用量状态栏工具</strong>
+</p>
 
-[English](README.md) | 简体中文
+<p align="center">
+  <a href="https://www.npmjs.com/package/cdps">
+    <img src="https://badge.fury.io/js/cdps.svg" alt="npm version">
+  </a>
+  <a href="https://opensource.org/licenses/MIT">
+    <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT">
+  </a>
+</p>
 
-[![npm version](https://badge.fury.io/js/cdps.svg)](https://www.npmjs.com/package/cdps)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+<p align="center">
+  <a href="README.md">English</a> | 简体中文
+</p>
+
+---
 
 在 Claude Code 状态栏中直接显示云 AI 服务的实时用量。目前通过 CloudMonitor API 支持阿里云百炼。
 
@@ -119,7 +131,7 @@ cdps statusline
 | 组件 | 描述 | 选项 |
 |------|------|------|
 | `provider` | 显示当前供应商名称 | — |
-| `usage` | 显示某维度的用量 | `dimension`: 5h/week/month, `showBar`: 布尔值 |
+| `usage` | 显示某维度的用量 | `dimension`: `5h`/`week`/`month`, `showBar`: 布尔值 |
 | `separator` | 显示 `\|` 分隔符 | `char`: 自定义字符 |
 | `text` | 静态文本 | `content`: 字符串 |
 
@@ -160,6 +172,117 @@ API 调用失败。运行 `cdps doctor` 检查：
 ```bash
 rm -rf ~/.cdps/cache/
 ```
+
+## 本地开发
+
+### 环境要求
+
+- Node.js >= 18.0.0
+- pnpm >= 9.x
+
+### 初始化
+
+```bash
+# 安装依赖
+pnpm install
+
+# 构建所有包
+pnpm build
+
+# 运行测试
+pnpm test:run
+```
+
+### 本地开发
+
+```bash
+# 监听模式 - 文件变更时自动构建
+pnpm dev
+
+# 使用 tsx 本地运行 CLI
+npx tsx packages/core/src/index.ts <命令>
+
+# 示例
+npx tsx packages/core/src/index.ts statusline
+```
+
+### 调试日志
+
+```bash
+# 启用调试输出
+DEBUG=1 npx tsx packages/core/src/index.ts statusline
+
+# 查看配置
+cat ~/.cdps/config.json
+cat ~/.cdps/settings.json
+```
+
+## 发布流程
+
+本项目使用 [Changesets](https://github.com/changesets/changesets) 进行版本管理。
+
+### 创建 Changeset
+
+```bash
+# 为改动添加 changeset
+pnpm changeset
+
+# 选择修改的包
+# 输入改动摘要
+```
+
+### 预发布版本 (Beta/RC)
+
+```bash
+# 进入预发布模式
+pnpm changeset pre enter beta
+
+# 创建 changeset 并更新版本
+pnpm changeset
+pnpm changeset version
+
+# 构建并使用 beta 标签发布
+pnpm build
+pnpm changeset publish
+
+# 退出预发布模式
+pnpm changeset pre exit
+```
+
+### 正式版本发布
+
+**自动发布（推荐）：**
+1. 创建包含 changeset 的 PR
+2. 合并到 `main` 分支
+3. GitHub Actions 创建 "Version Packages" PR
+4. 合并 "Version Packages" PR → 自动发布到 npm
+
+**手动发布（仅维护者）：**
+```bash
+pnpm build
+pnpm version    # 更新版本和变更日志
+pnpm release    # 发布到 npm
+```
+
+### 发布配置
+
+- **固定模式**：所有包使用相同版本号
+- **基础分支**：`main`
+- **访问权限**：公开的 npm 包
+
+## 快速参考
+
+| 任务 | 命令 |
+|------|------|
+| 安装依赖 | `pnpm install` |
+| 构建所有包 | `pnpm build` |
+| 运行测试 | `pnpm test:run` |
+| 运行测试（带覆盖率） | `pnpm test:coverage` |
+| 代码检查 | `pnpm lint` |
+| 格式化代码 | `pnpm format` |
+| 创建 changeset | `pnpm changeset` |
+| 检查 changeset 状态 | `pnpm changeset status` |
+| 本地运行 CLI | `npx tsx packages/core/src/index.ts <命令>` |
 
 ## 环境要求
 

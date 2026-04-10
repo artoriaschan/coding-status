@@ -1,11 +1,23 @@
 # cdps
 
-Cloud provider usage statusline for Claude Code CLI
+<p align="center">
+  <strong>Cloud provider usage statusline for Claude Code CLI</strong>
+</p>
 
-English | [简体中文](README.zh-CN.md)
+<p align="center">
+  <a href="https://www.npmjs.com/package/cdps">
+    <img src="https://badge.fury.io/js/cdps.svg" alt="npm version">
+  </a>
+  <a href="https://opensource.org/licenses/MIT">
+    <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT">
+  </a>
+</p>
 
-[![npm version](https://badge.fury.io/js/cdps.svg)](https://www.npmjs.com/package/cdps)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+<p align="center">
+  English | <a href="README.zh-CN.md">简体中文</a>
+</p>
+
+---
 
 Display real-time cloud AI service usage directly in your Claude Code statusline. Currently supports Aliyun Bailian (百炼) through CloudMonitor API.
 
@@ -119,7 +131,7 @@ cdps statusline
 | Widget | Description | Options |
 |--------|-------------|---------|
 | `provider` | Shows current provider name | — |
-| `usage` | Shows usage for a dimension | `dimension`: 5h/week/month, `showBar`: boolean |
+| `usage` | Shows usage for a dimension | `dimension`: `5h`/`week`/`month`, `showBar`: boolean |
 | `separator` | Shows `\|` separator | `char`: custom character |
 | `text` | Static text | `content`: string |
 
@@ -160,6 +172,117 @@ Clear the cache:
 ```bash
 rm -rf ~/.cdps/cache/
 ```
+
+## Development
+
+### Prerequisites
+
+- Node.js >= 18.0.0
+- pnpm >= 9.x
+
+### Setup
+
+```bash
+# Install dependencies
+pnpm install
+
+# Build all packages
+pnpm build
+
+# Run tests
+pnpm test:run
+```
+
+### Local Development
+
+```bash
+# Watch mode - rebuilds on file changes
+pnpm dev
+
+# Run CLI locally with tsx
+npx tsx packages/core/src/index.ts <command>
+
+# Example
+npx tsx packages/core/src/index.ts statusline
+```
+
+### Debug with Logs
+
+```bash
+# Enable debug output
+DEBUG=1 npx tsx packages/core/src/index.ts statusline
+
+# Check configuration
+cat ~/.cdps/config.json
+cat ~/.cdps/settings.json
+```
+
+## Publishing Workflow
+
+This project uses [Changesets](https://github.com/changesets/changesets) for version management.
+
+### Creating a Changeset
+
+```bash
+# Add a changeset for your changes
+pnpm changeset
+
+# Select the packages you've modified
+# Enter a summary of changes
+```
+
+### Prerelease (Beta/RC)
+
+```bash
+# Enter prerelease mode
+pnpm changeset pre enter beta
+
+# Create changeset and version
+pnpm changeset
+pnpm changeset version
+
+# Build and publish with beta tag
+pnpm build
+pnpm changeset publish
+
+# Exit prerelease mode
+pnpm changeset pre exit
+```
+
+### Production Release
+
+**Automated (Recommended):**
+1. Create a PR with your changes and changeset
+2. Merge to `main` branch
+3. GitHub Actions creates a "Version Packages" PR
+4. Merge the "Version Packages" PR → auto-publishes to npm
+
+**Manual (Maintainers only):**
+```bash
+pnpm build
+pnpm version    # Update versions and changelog
+pnpm release    # Publish to npm
+```
+
+### Release Configuration
+
+- **Fixed mode**: All packages share the same version
+- **Base branch**: `main`
+- **Access**: Public npm packages
+
+## Quick Reference
+
+| Task | Command |
+|------|---------|
+| Install dependencies | `pnpm install` |
+| Build all packages | `pnpm build` |
+| Run tests | `pnpm test:run` |
+| Run tests with coverage | `pnpm test:coverage` |
+| Lint | `pnpm lint` |
+| Format code | `pnpm format` |
+| Create changeset | `pnpm changeset` |
+| Check changeset status | `pnpm changeset status` |
+| Run CLI locally | `npx tsx packages/core/src/index.ts <command>` |
 
 ## Requirements
 
