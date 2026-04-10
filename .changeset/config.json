@@ -3,7 +3,7 @@
   "changelog": "@changesets/cli/changelog",
   "commit": false,
   "fixed": [
-    ["@cdps/core", "@cdps/widget-renderer", "@cdps/usage-adapter-bailian"]
+    ["cdps", "@cdps/core", "@cdps/widget-renderer", "@cdps/usage-adapter-bailian"]
   ],
   "linked": [],
   "access": "public",
