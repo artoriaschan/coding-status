@@ -200,17 +200,17 @@ pnpm test:run
 pnpm dev
 
 # 使用 tsx 本地运行 CLI
-npx tsx packages/core/src/index.ts <命令>
+npx tsx packages/cli/src/index.ts <命令>
 
 # 示例
-npx tsx packages/core/src/index.ts statusline
+npx tsx packages/cli/src/index.ts statusline
 ```
 
 ### 调试日志
 
 ```bash
 # 启用调试输出
-DEBUG=1 npx tsx packages/core/src/index.ts statusline
+DEBUG=1 npx tsx packages/cli/src/index.ts statusline
 
 # 查看配置
 cat ~/.coding-status/config.json
@@ -282,7 +282,7 @@ pnpm release    # 发布到 npm
 | 格式化代码 | `pnpm format` |
 | 创建 changeset | `pnpm changeset` |
 | 检查 changeset 状态 | `pnpm changeset status` |
-| 本地运行 CLI | `npx tsx packages/core/src/index.ts <命令>` |
+| 本地运行 CLI | `npx tsx packages/cli/src/index.ts <命令>` |
 
 ## 环境要求
 

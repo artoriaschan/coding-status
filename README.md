@@ -200,17 +200,17 @@ pnpm test:run
 pnpm dev
 
 # Run CLI locally with tsx
-npx tsx packages/core/src/index.ts <command>
+npx tsx packages/cli/src/index.ts <command>
 
 # Example
-npx tsx packages/core/src/index.ts statusline
+npx tsx packages/cli/src/index.ts statusline
 ```
 
 ### Debug with Logs
 
 ```bash
 # Enable debug output
-DEBUG=1 npx tsx packages/core/src/index.ts statusline
+DEBUG=1 npx tsx packages/cli/src/index.ts statusline
 
 # Check configuration
 cat ~/.coding-status/config.json
@@ -282,7 +282,7 @@ pnpm release    # Publish to npm
 | Format code | `pnpm format` |
 | Create changeset | `pnpm changeset` |
 | Check changeset status | `pnpm changeset status` |
-| Run CLI locally | `npx tsx packages/core/src/index.ts <command>` |
+| Run CLI locally | `npx tsx packages/cli/src/index.ts <command>` |
 
 ## Requirements
 
