@@ -5,8 +5,8 @@
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/coding-status">
-    <img src="https://badge.fury.io/js/coding-status.svg" alt="npm version">
+  <a href="https://www.npmjs.com/package/@coding-status/cli">
+    <img src="https://badge.fury.io/js/%40coding-status%2Fcli.svg" alt="npm version">
   </a>
   <a href="https://opensource.org/licenses/MIT">
     <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT">
@@ -32,7 +32,7 @@ Display real-time cloud AI service usage directly in your Claude Code statusline
 ## Installation
 
 ```bash
-npm install -g coding-status
+npm install -g @coding-status/cli
 ```
 
 Requires Node.js >= 20.12.0

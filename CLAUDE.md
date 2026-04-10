@@ -66,7 +66,7 @@ packages/
 ## Installation
 
 ```bash
-npm install -g coding-status
+npm install -g @coding-status/cli
 ```
 
 Requires Node.js >= 18.0.0
