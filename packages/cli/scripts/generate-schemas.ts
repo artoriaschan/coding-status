@@ -56,7 +56,7 @@ export function generateSchemas(outputDir?: string): void {
     };
 
     const configSchemaPath = join(coreSchemasDir, 'config.schema.json');
-    writeFileSync(configSchemaPath, JSON.stringify(configSchemaWithMeta, null, 4) + '\n', 'utf-8');
+    writeFileSync(configSchemaPath, JSON.stringify(configSchemaWithMeta, null, 2) + '\n', 'utf-8');
 
     // Generate settings.schema.json per D-02, D-17
     const settingsJsonSchema = zodToJsonSchema(SettingsSchema, {
