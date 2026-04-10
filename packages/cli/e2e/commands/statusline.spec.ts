@@ -401,10 +401,13 @@ describe('registerStatusline', () => {
             await statuslineCommand?.parseAsync([], { from: 'user' });
 
             // Assert
-            expect(mockLoader.getAdapter).toHaveBeenCalledWith('@coding-status/usage-adapter-bailian', {
-                accessKeyId: 'key',
-                accessKeySecret: 'secret',
-            });
+            expect(mockLoader.getAdapter).toHaveBeenCalledWith(
+                '@coding-status/usage-adapter-bailian',
+                {
+                    accessKeyId: 'key',
+                    accessKeySecret: 'secret',
+                }
+            );
         });
 
         it('should call adapter.getDimensions', async () => {

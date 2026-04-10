@@ -139,7 +139,9 @@ describe('registerInit', () => {
         // Assert
         expect(consoleLogSpy).toHaveBeenCalledWith('Initialization complete!');
         expect(consoleLogSpy).toHaveBeenCalledWith('Config directory: ~/.coding-status/');
-        expect(consoleLogSpy).toHaveBeenCalledWith('Next step: Run `coding-status add` to add a provider');
+        expect(consoleLogSpy).toHaveBeenCalledWith(
+            'Next step: Run `coding-status add` to add a provider'
+        );
     });
 
     it('should output message when Claude Code settings updated', async () => {
