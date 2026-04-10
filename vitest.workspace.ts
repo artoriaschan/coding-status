@@ -1,6 +1,4 @@
-import { defineWorkspace } from 'vitest/config';
-
-export default defineWorkspace([
+export default [
     'packages/*',
     {
         test: {
@@ -16,4 +14,4 @@ export default defineWorkspace([
             },
         },
     },
-]);
+];
