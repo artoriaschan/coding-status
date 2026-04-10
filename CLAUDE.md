@@ -1,181 +1,215 @@
-<!-- GSD:project-start source:PROJECT.md -->
+# coding-plans-statusline (cdps)
+
 ## Project
 
-**coding-plans-statusline (cdps)**
+cdps is a CLI tool that integrates with cloud provider usage APIs to display real-time usage information in Claude Code's statusline. Users configure different cloud providers through an adapter pattern. The first adapter supports Aliyun Bailian (querying CallCount metrics via CloudMonitor API).
 
-cdps 是一个 CLI 工具，用于接入云供应商用量查询 API，将用量信息实时展示在 Claude Code 的 statusline 中。用户通过适配器模式配置不同云供应商，首个适配器支持阿里百炼（通过云监控 API 查询 CallCount 指标）。
+**Target users:** Developers who use Claude Code for development and cloud AI services like Aliyun Bailian.
 
-目标用户：使用 Claude Code 开发，同时使用阿里百炼等云 AI 服务的开发者。
-
-**Core Value:** **实时用量可见性** — 用户能在 Claude Code 中直接看到当前 AI 服务的用量消耗，无需离开开发环境去查看供应商控制台。
+**Core Value:** Real-time usage visibility — Users can see current AI service usage consumption directly in Claude Code without leaving the development environment to check the provider console.
 
 ### Constraints
 
-- **Tech Stack**: TypeScript ESM only (`"type": "module"`)，chalk 5.x 是 ESM only
-- **Runtime**: Node.js >= 18.0.0
-- **Monorepo**: pnpm workspaces，不使用 npm/yarn workspaces
-- **Version**: Changesets fixed mode（所有包统一版本号）
-- **Dependencies**: @alicloud/cms20190101 SDK 用于百炼 API 调用
-- **Security**: AccessKey/Secret 存储在 ~/.cdps/config.json（用户本地，不上传 git）
-<!-- GSD:project-end -->
+- **Tech Stack:** TypeScript ESM only (`"type": "module"`), chalk 5.x is ESM only
+- **Runtime:** Node.js >= 18.0.0
+- **Monorepo:** pnpm workspaces, no npm/yarn workspaces
+- **Version:** Changesets fixed mode (all packages share unified version numbers)
+- **Dependencies:** @alicloud/cms20190101 SDK for Bailian API calls
+- **Security:** AccessKey/Secret stored in ~/.cdps/config.json (user local, not committed to git)
 
-<!-- GSD:stack-start source:research/STACK.md -->
 ## Technology Stack
 
-## Recommended Stack
 ### Core Technologies
-| Technology | Version | Purpose | Why Recommended |
-|------------|---------|---------|-----------------|
+
+| Technology | Version | Purpose | Rationale |
+|------------|---------|---------|-----------|
 | Node.js | 20.x LTS (>=18.0.0) | Runtime | LTS stability, native ESM support, required by project constraints |
 | TypeScript | 5.4.x+ | Language | Native ESM support, strict type checking, modern decorator support |
 | pnpm | 9.x+ | Package Manager | Fastest installs, strict peer dependency handling, workspace-native features |
 | Commander | 13.x | CLI Framework | Mature, lightweight, excellent TypeScript support, auto-generated help |
 | Chalk | 5.x | ANSI Colors | ESM-only (matches project constraint), minimal overhead, chainable API |
 | Zod | 3.24.x | Schema Validation | TypeScript-first, runtime validation, excellent error messages |
-### Infrastructure (Monorepo & Build)
-| Technology | Version | Purpose | Why Recommended |
-|------------|---------|---------|-----------------|
-| tsup | 8.x | Bundler | Zero-config TypeScript bundling, ESM/CJS dual output, blazing fast |
-| tsx | 4.x | TypeScript Execution | Run TypeScript directly in dev, faster than ts-node, ESM-native |
-| Changesets | 2.x | Version Management | Industry standard for monorepos, fixed mode support, GitHub Actions integration |
-| Vitest | 3.x | Testing | ESM-native, TypeScript-first, faster than Jest, Vite-based |
-### Supporting Libraries
-| Library | Version | Purpose | When to Use |
-|---------|---------|---------|-------------|
-| @clack/prompts | 0.10.x | Interactive Prompts | All interactive commands (init, add) — modern, beautiful, minimal |
-| execa | 9.x | Process Execution | Shelling out to modify Claude Code settings.json |
-| cosmiconfig | 9.x | Config Discovery | If expanding to support multiple config file formats |
-| consola | 3.x | Logging | CLI output with icons/colors — Nuxt/Vue CLI proven |
-### Development Tools
-| Tool | Purpose | Notes |
-|------|---------|-------|
-| @types/node | Type definitions | Always match Node.js version |
-| tsx | Dev script runner | Replaces ts-node, `tsx watch src/index.ts` |
-| rimraf | Cross-platform rm | Windows compatibility for clean scripts |
-| c8 | Code coverage | Native alternative to nyc, works with Vitest |
-## Installation
-### Project Root (pnpm workspace)
-# Initialize monorepo
-# Core CLI dependencies (installed in packages/core/)
-# Widget renderer (installed in packages/widget-renderer/)
-# Bailian adapter (installed in packages/usage-adapter-bailian/)
-# Interactive prompts (for core)
-### TypeScript Configuration (tsconfig.base.json)
-### Package.json ESM Configuration
-## Alternatives Considered
-### CLI Framework: Commander vs oclif vs cac
-| Aspect | Commander (Recommended) | oclif | cac |
-|--------|------------------------|-------|-----|
-| Maturity | Very High (10+ years) | High | Medium |
-| Bundle Size | Small (~50KB) | Large (~500KB+) | Tiny (~20KB) |
-| TypeScript | Excellent | Good | Good |
-| Plugin System | Manual | Built-in | Manual |
-| Help Generation | Auto | Auto | Auto |
-| Learning Curve | Low | Medium | Low |
-### Bundler: tsup vs pkgroll
-| Aspect | tsup (Recommended) | pkgroll |
-|--------|-------------------|---------|
-| Config | Zero-config | Minimal config |
-| Speed | Fast (esbuild) | Fast (rollup) |
-| Watch Mode | Built-in | Via separate tool |
-| ESM/CJS | Dual output easy | Dual output easy |
-| TypeScript | Native | Native |
-| Ecosystem | Larger | Smaller, Sindre Sorhus |
-### Color Library: chalk vs picocolors vs ansi-colors
-| Aspect | chalk 5.x (Recommended) | picocolors | ansi-colors |
-|--------|------------------------|------------|-------------|
-| ESM | Native | Native | CommonJS |
-| Size | ~30KB | ~5KB | ~10KB |
-| Features | Rich (256 colors, styles) | Basic 16 colors | Moderate |
-| Chaining | Excellent | Good | Good |
-| Project Fit | Required (ESM constraint) | ESM but basic | ESM issues |
-### Prompt Library: @clack/prompts vs Inquirer vs prompts
-| Aspect | @clack/prompts (Recommended) | Inquirer | prompts |
-|--------|------------------------------|----------|---------|
-| Modern | Yes (2023+) | No (2015+) | Medium |
-| TypeScript | First-class | Good | Good |
-| Bundle Size | Small | Large | Small |
-| Aesthetics | Excellent (modern) | Dated | Basic |
-| Validation | Built-in | Manual | Manual |
-### Schema Validation: Zod vs Ajv vs Joi
-| Aspect | Zod (Recommended) | Ajv | Joi |
-|--------|-------------------|-----|-----|
-| TypeScript | Native inference | Requires JSON Schema | Good |
-| Bundle Size | ~50KB | ~25KB + schemas | ~100KB |
-| DX | Excellent | Good | Good |
-| Error Messages | Excellent | Configurable | Good |
-| ESM | Native | Native | CommonJS default |
-## What NOT to Use
-| Avoid | Why | Use Instead |
-|-------|-----|-------------|
-| **ts-node** | Slower than tsx, CommonJS default, complex ESM config | tsx (4.x) |
-| **Jest** | CommonJS-first, slow, complex ESM support | Vitest (3.x) |
-| **Inquirer.js** | Large bundle, dated API, maintenance mode | @clack/prompts |
-| **npm/yarn workspaces** | Slower installs, less strict dependency resolution | pnpm workspaces |
-| **chalk 4.x** | CommonJS, project requires ESM only | chalk 5.x |
-| **oclif** | Overkill for simple CLI, large bundle | Commander |
-| **Ink (React terminal)** | Heavy dependency (React), overkill for statusline | Chalk + manual layout |
-| **Yargs** | Large bundle, complex API, slower | Commander |
-| **Joi** | Large bundle, CommonJS default, less TypeScript-native | Zod |
-| **tsup 7.x or lower** | Older esbuild, potential ESM issues | tsup 8.x |
-## Version Compatibility
-| Package A | Compatible With | Notes |
-|-----------|-----------------|-------|
-| chalk 5.x | Node.js >=18.0.0 | ESM-only, requires `"type": "module"` |
-| tsx 4.x | TypeScript 5.x | Use `tsx watch` for dev, `tsup` for build |
-| Commander 13.x | Node.js >=18.0.0 | Requires `"moduleResolution": "NodeNext"` |
-| Zod 3.24.x | TypeScript 5.4+ | Best type inference with strict mode |
-| pnpm 9.x | Node.js >=18.0.0 | Lockfile version 9, faster installs |
-### Critical Compatibility Notes
-## Stack Patterns by Use Case
-### If CLI grows to 10+ commands with plugins:
-- **Switch to:** oclif
-- **Why:** Plugin architecture, command topics, sophisticated help
-### If bundle size is critical (< 100KB total):
-- **Switch to:** picocolors (instead of chalk)
-- **Switch to:** cac (instead of commander)
-- **Why:** Smaller footprint for distribution-sensitive tools
-### If team prefers explicit JSON Schema:
-- **Switch to:** Ajv (instead of Zod)
-- **Why:** Industry standard JSON Schema validation, separate schema files
-### If CI/CD requires CommonJS:
-- **Switch to:** chalk 4.x + tsx with CJS target
-- **Why:** Dual-mode output from tsup handles both
-## Confidence Assessment
-| Area | Confidence | Notes |
-|------|------------|-------|
-| Core Stack (Node/TS/pnpm) | HIGH | Industry standard 2025, well-documented |
-| CLI Framework (Commander) | HIGH | 10+ years mature, excellent docs |
-| Color/Styling (Chalk 5.x) | HIGH | ESM-native, widely adopted |
-| Bundler (tsup) | HIGH | Zero-config, battle-tested |
-| Validation (Zod) | HIGH | TypeScript community favorite |
-| Prompts (@clack/prompts) | MEDIUM-HIGH | Relatively new (2023) but stable |
-| Monorepo (Changesets) | HIGH | Industry standard for versioning |
-## Sources
-- Commander.js documentation: https://github.com/tj/commander.js
-- Chalk 5.x ESM release: https://github.com/chalk/chalk/releases/tag/v5.0.0
-- tsup documentation: https://tsup.egoist.dev/
-- pnpm workspaces: https://pnpm.io/workspaces
-- Changesets documentation: https://github.com/changesets/changesets
-- @clack/prompts: https://github.com/natemoo-re/clack
-- Zod documentation: https://zod.dev/
-- Vitest documentation: https://vitest.dev/
-- tsx documentation: https://github.com/privatenumber/tsx
-<!-- GSD:stack-end -->
 
-<!-- GSD:conventions-start source:CONVENTIONS.md -->
+### Infrastructure
+
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| tsup | 8.x | Bundler - Zero-config TypeScript bundling, ESM/CJS dual output |
+| tsx | 4.x | TypeScript Execution - Run TypeScript directly in dev, ESM-native |
+| Changesets | 2.x | Version Management - Industry standard for monorepos, fixed mode support |
+| Vitest | 3.x | Testing - ESM-native, TypeScript-first, faster than Jest |
+
+### Supporting Libraries
+
+| Library | Version | Purpose |
+|---------|---------|---------|
+| @clack/prompts | 0.10.x | Interactive Prompts - Modern, beautiful, minimal |
+| execa | 9.x | Process Execution - Shelling out to modify Claude Code settings.json |
+
+### Development Tools
+
+| Tool | Purpose |
+|------|---------|
+| ESLint 10.1.0 + typescript-eslint + Sheriff 0.19.6 | Linting with module boundary enforcement |
+| Prettier 3.8.1 | Code formatting |
+| Turborepo 2.x | Build orchestration with caching |
+| Husky 9.x + lint-staged 16.x | Git hooks for pre-commit checks |
+
+## Package Structure
+
+```
+packages/
+  widget-renderer/       # Base layer - types, colors, widgets
+  core/                  # CLI framework - commands, config, adapter loader
+  usage-adapter-bailian/ # Aliyun Bailian provider adapter
+```
+
+## Installation
+
+```bash
+npm install -g cdps
+```
+
+Requires Node.js >= 18.0.0
+
+## Quick Start
+
+```bash
+# 1. Initialize cdps
+cdps init
+
+# 2. Add a provider
+cdps add
+
+# 3. Configure Claude Code statusline (auto-detected during init)
+# Or manually add to ~/.claude/settings.json:
+# { "statusline": "$(cdps statusline)" }
+
+# 4. Test statusline output
+cdps statusline
+```
+
+## Commands
+
+| Command | Description |
+|---------|-------------|
+| `cdps init` | Initialize cdps configuration |
+| `cdps add` | Add a new provider interactively |
+| `cdps list` | List all configured providers |
+| `cdps use <name>` | Switch to a different provider |
+| `cdps rm <name>` | Remove a provider |
+| `cdps doctor` | Check configuration health |
+| `cdps statusline` | Output statusline string |
+
+## Configuration
+
+### Provider Config (~/.cdps/config.json)
+
+```json
+{
+  "providers": [
+    {
+      "name": "my-bailian",
+      "type": "bailian",
+      "credentials": {
+        "accessKeyId": "your-access-key",
+        "accessKeySecret": "your-secret",
+        "region": "cn-hangzhou"
+      }
+    }
+  ],
+  "current": "my-bailian",
+  "cacheTtl": 300
+}
+```
+
+Security note: This file is created with `chmod 600` to restrict access.
+
+### Widget Settings (~/.cdps/settings.json)
+
+```json
+{
+  "rows": [
+    {
+      "widgets": [
+        { "type": "provider" },
+        { "type": "separator" },
+        { "type": "usage", "dimension": "5h", "showBar": true }
+      ]
+    }
+  ],
+  "thresholds": {
+    "low": 50,
+    "medium": 80
+  },
+  "colors": {
+    "low": "green",
+    "medium": "yellow",
+    "high": "red"
+  }
+}
+```
+
 ## Conventions
 
-Conventions not yet established. Will populate as patterns emerge during development.
-<!-- GSD:conventions-end -->
+### Code Style
+- Single quotes for strings
+- 100 character line width
+- 4-space indentation
+- Barrel exports enforced via Sheriff rules
 
-<!-- GSD:architecture-start source:ARCHITECTURE.md -->
+### Module Structure
+- `domain/` - Business logic and core types
+- `core/` - Shared utilities and helpers  
+- `feature/` - Command implementations and adapters
+
+### Testing
+- `.spec.ts` naming convention
+- Vitest for ESM-native testing
+- Exclude `third_parts/` from test runs
+
 ## Architecture
 
-Architecture not yet mapped. Follow existing patterns found in the codebase.
-<!-- GSD:architecture-end -->
+### Widget Rendering Flow
 
-<!-- GSD:workflow-start source:GSD defaults -->
+1. **Settings Loader** reads ~/.cdps/settings.json
+2. **Widget Registry** maps widget types to implementations
+3. **Renderer Engine** composes widgets into statusline output
+4. **Color Utilities** apply thresholds and ANSI colors (respects NO_COLOR)
+
+### Adapter Loading Flow
+
+1. **AdapterLoader** dynamically imports adapter packages by name
+2. **UsageAdapter** interface provides contract for all providers
+3. **BailianAdapter** implements Aliyun CMS API integration
+4. **Circuit Breaker** protects against consecutive API failures
+5. **File Cache** stores results with configurable TTL
+
+### CLI Command Flow
+
+```
+cli.ts (bootstrap)
+  -> registerInit(program)
+  -> registerAdd(program)
+  -> registerList(program)
+  -> registerUse(program)
+  -> registerRm(program)
+  -> registerDoctor(program)
+  -> registerStatusline(program)
+```
+
+## What NOT to Use
+
+| Avoid | Why | Use Instead |
+|-------|-----|-------------|
+| ts-node | Slower than tsx, CommonJS default, complex ESM config | tsx (4.x) |
+| Jest | CommonJS-first, slow, complex ESM support | Vitest (3.x) |
+| Inquirer.js | Large bundle, dated API, maintenance mode | @clack/prompts |
+| npm/yarn workspaces | Slower installs, less strict dependency resolution | pnpm workspaces |
+| chalk 4.x | CommonJS, project requires ESM only | chalk 5.x |
+| oclif | Overkill for simple CLI, large bundle | Commander |
+| Joi | Large bundle, CommonJS default, less TypeScript-native | Zod |
+
 ## GSD Workflow Enforcement
 
 Before using Edit, Write, or other file-changing tools, start work through a GSD command so planning artifacts and execution context stay in sync.
@@ -185,14 +219,26 @@ Use these entry points:
 - `/gsd:debug` for investigation and bug fixing
 - `/gsd:execute-phase` for planned phase work
 
-Do not make direct repo edits outside a GSD workflow unless the user explicitly asks to bypass it.
-<!-- GSD:workflow-end -->
+Do not make direct repo edits outside a GSD workflow unless explicitly asked to bypass it.
 
+## Version Compatibility
 
+| Package | Compatible With | Notes |
+|---------|-----------------|-------|
+| chalk 5.x | Node.js >=18.0.0 | ESM-only, requires `"type": "module"` |
+| tsx 4.x | TypeScript 5.x | Use `tsx watch` for dev, `tsup` for build |
+| Commander 13.x | Node.js >=18.0.0 | Requires `"moduleResolution": "NodeNext"` |
+| Zod 3.24.x | TypeScript 5.4+ | Best type inference with strict mode |
+| pnpm 9.x | Node.js >=18.0.0 | Lockfile version 9, faster installs |
 
-<!-- GSD:profile-start -->
-## Developer Profile
+## Sources
 
-> Profile not yet configured. Run `/gsd:profile-user` to generate your developer profile.
-> This section is managed by `generate-claude-profile` -- do not edit manually.
-<!-- GSD:profile-end -->
+- Commander.js documentation: https://github.com/tj/commander.js
+- Chalk 5.x ESM release: https://github.com/chalk/chalk/releases/tag/v5.0.0
+- tsup documentation: https://tsup.egoist.dev/
+- pnpm workspaces: https://pnpm.io/workspaces
+- Changesets documentation: https://github.com/changesets/changesets
+- @clack/prompts: https://github.com/natemoo-re/clack
+- Zod documentation: https://zod.dev/
+- Vitest documentation: https://vitest.dev/
+- tsx documentation: https://github.com/privatenumber/tsx
