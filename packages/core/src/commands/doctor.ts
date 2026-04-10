@@ -12,8 +12,7 @@ import chalk from 'chalk';
 import { Command } from 'commander';
 import { ZodError } from 'zod';
 
-import { loadConfig, ConfigSchema } from '../config/index.js';
-import { formatZodError } from '../config/error-formatter.js';
+import { loadConfig, ConfigSchema, formatZodError } from '../config/index.js';
 
 /**
  * Register the doctor command with Commander program.

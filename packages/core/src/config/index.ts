@@ -16,5 +16,8 @@ export { ProviderSchema, ConfigSchema, type Provider, type Config } from './conf
 // Store operations
 export { loadConfig, saveConfig, getConfigDir } from './config-store.js';
 
+// Error formatting
+export { formatZodError } from './error-formatter.js';
+
 // Claude Code integration
 export { updateClaudeSettings, CLAUDE_SETTINGS_PATH } from './claude-settings.js';

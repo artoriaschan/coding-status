@@ -15,7 +15,7 @@ import {
     type RenderContext,
     type Settings,
 } from '@cdps/widget-renderer';
-import { AdapterLoader } from '../adapters/loader.js';
+import { AdapterLoader } from '../adapters/index.js';
 import { withTimeout, TimeoutError, STATUSLINE_TIMEOUT_MS } from '../utils/index.js';
 import type { Provider } from '../config/index.js';
 
@@ -141,7 +141,7 @@ async function fetchAndRender(currentProvider: Provider, settings: Settings): Pr
 
         // Render and return
         return renderStatusLine(ctx, settings);
-    } catch (error) {
+    } catch {
         // Adapter load/init error - return provider name only (D-17)
         return currentProvider.name;
     }

@@ -27,6 +27,7 @@ export const sheriffConfig: SheriffConfig = {
         // Core layer - core package modules
         'packages/core/src/config': 'core:config',
         'packages/core/src/adapter-loader': 'core:adapter',
+        'packages/core/src/adapters': 'core:adapter',
         'packages/core/src/utils': 'core:utils',
 
         // Feature layer - CLI commands
