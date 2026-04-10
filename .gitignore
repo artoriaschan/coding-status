@@ -7,6 +7,9 @@ dist/
 build/
 *.tsbuildinfo
 
+# Turborepo cache
+.turbo/
+
 # Environment
 .env
 .env.*.local
@@ -30,6 +33,12 @@ coverage/
 # OS
 .DS_Store
 Thumbs.db
+
+# Claude Code
+.claude/
+
+# External references
+third_parts/
 
 # Changesets (keep the config, ignore generated files)
 # .changeset/*.md  (uncomment to ignore generated changeset files)
