@@ -10,7 +10,7 @@
     },
     "scripts": {
         "prepare": "husky",
-        "build": "turbo build && prettier --write 'packages/*/schemas/*.json'",
+        "build": "turbo build",
         "dev": "turbo dev",
         "test": "vitest",
         "test:run": "vitest --run",

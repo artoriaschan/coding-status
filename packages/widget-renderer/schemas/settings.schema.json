@@ -22,7 +22,12 @@
                             "properties": {
                                 "widget": {
                                     "type": "string",
-                                    "enum": ["provider", "separator", "usage", "text"]
+                                    "enum": [
+                                        "provider",
+                                        "separator",
+                                        "usage",
+                                        "text"
+                                    ]
                                 },
                                 "color": {
                                     "type": "string",
@@ -50,7 +55,9 @@
                                     "additionalProperties": {}
                                 }
                             },
-                            "required": ["widget"],
+                            "required": [
+                                "widget"
+                            ],
                             "additionalProperties": false
                         }
                     },

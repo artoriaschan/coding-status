@@ -6,3 +6,4 @@ pnpm-lock.yaml
 .husky/
 third_parts/
 .planning/
+**/schemas/*.json
