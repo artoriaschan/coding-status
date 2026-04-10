@@ -4,9 +4,6 @@
     "description": "CDPS CLI core - cloud provider usage statusline tool",
     "type": "module",
     "main": "./dist/index.js",
-    "bin": {
-        "cdps": "./dist/index.js"
-    },
     "types": "./dist/index.d.ts",
     "files": [
         "dist",
