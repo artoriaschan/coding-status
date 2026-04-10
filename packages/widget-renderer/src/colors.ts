@@ -17,7 +17,7 @@ let plainMode = false;
  * @param plain - Whether to disable ANSI colors
  */
 export function setPlainMode(plain: boolean): void {
-  plainMode = plain;
+    plainMode = plain;
 }
 
 /**
@@ -30,13 +30,13 @@ export function setPlainMode(plain: boolean): void {
  * @returns Chalk function for the specified color
  */
 export function getChalkColor(color: ColorValue | undefined): ChalkInstance {
-  if (!color) return chalk;
-  // All ColorValue strings are valid chalk method names
-  const chalkMethod = chalk[color as keyof typeof chalk];
-  if (typeof chalkMethod === 'function') {
-    return chalkMethod as ChalkInstance;
-  }
-  return chalk;
+    if (!color) return chalk;
+    // All ColorValue strings are valid chalk method names
+    const chalkMethod = chalk[color as keyof typeof chalk];
+    if (typeof chalkMethod === 'function') {
+        return chalkMethod as ChalkInstance;
+    }
+    return chalk;
 }
 
 /**
@@ -47,31 +47,27 @@ export function getChalkColor(color: ColorValue | undefined): ChalkInstance {
  * @param fallback - Fallback ColorValue if primary color is undefined
  * @returns Colored string
  */
-export function colorize(
-  text: string,
-  color?: ColorValue,
-  fallback?: ColorValue
-): string {
-  if (plainMode) {
+export function colorize(text: string, color?: ColorValue, fallback?: ColorValue): string {
+    if (plainMode) {
+        return text;
+    }
+    if (color) {
+        return getChalkColor(color)(text);
+    }
+    if (fallback) {
+        return getChalkColor(fallback)(text);
+    }
     return text;
-  }
-  if (color) {
-    return getChalkColor(color)(text);
-  }
-  if (fallback) {
-    return getChalkColor(fallback)(text);
-  }
-  return text;
 }
 
 /** Options for createUsageBar */
 export interface UsageBarOptions {
-  /** Custom colors for each threshold */
-  colors?: UsageBarColors;
-  /** Whether to show the bar (default: true) */
-  showBar?: boolean;
-  /** Whether to show the percentage (default: true) */
-  showPercent?: boolean;
+    /** Custom colors for each threshold */
+    colors?: UsageBarColors;
+    /** Whether to show the bar (default: true) */
+    showBar?: boolean;
+    /** Whether to show the percentage (default: true) */
+    showPercent?: boolean;
 }
 
 /**
@@ -86,45 +82,42 @@ export interface UsageBarOptions {
  * @param options - Bar display options (colors, showBar, showPercent)
  * @returns Formatted string like "[████████░░ 80%]"
  */
-export function createUsageBar(
-  percent: number,
-  options?: UsageBarOptions
-): string {
-  const opts = options ?? {};
-  const showBar = opts.showBar !== false;
-  const showPercent = opts.showPercent !== false;
-  const colors = opts.colors;
+export function createUsageBar(percent: number, options?: UsageBarOptions): string {
+    const opts = options ?? {};
+    const showBar = opts.showBar !== false;
+    const showPercent = opts.showPercent !== false;
+    const colors = opts.colors;
 
-  // If both are hidden, return empty string
-  if (!showBar && !showPercent) {
-    return '';
-  }
+    // If both are hidden, return empty string
+    if (!showBar && !showPercent) {
+        return '';
+    }
 
-  // Clamp percent to valid range
-  const pctInt = Math.floor(Math.max(0, Math.min(100, percent)));
+    // Clamp percent to valid range
+    const pctInt = Math.floor(Math.max(0, Math.min(100, percent)));
 
-  // Get colors with defaults
-  const lowColor = colors?.low ?? 'green';
-  const mediumColor = colors?.medium ?? 'yellow';
-  const highColor = colors?.high ?? 'red';
+    // Get colors with defaults
+    const lowColor = colors?.low ?? 'green';
+    const mediumColor = colors?.medium ?? 'yellow';
+    const highColor = colors?.high ?? 'red';
 
-  // Select color based on percentage thresholds (< 50% low, < 80% medium, >= 80% high)
-  const selectedColor = pctInt < 50 ? lowColor : pctInt < 80 ? mediumColor : highColor;
+    // Select color based on percentage thresholds (< 50% low, < 80% medium, >= 80% high)
+    const selectedColor = pctInt < 50 ? lowColor : pctInt < 80 ? mediumColor : highColor;
 
-  // Build bar segments
-  const filled = Math.min(10, Math.max(0, Math.ceil(pctInt / 10)));
-  const empty = 10 - filled;
+    // Build bar segments
+    const filled = Math.min(10, Math.max(0, Math.ceil(pctInt / 10)));
+    const empty = 10 - filled;
 
-  // Build output
-  if (showBar && showPercent) {
-    const bar = '█'.repeat(filled) + '░'.repeat(empty);
-    const pctStr = String(pctInt).padStart(3);
-    return colorize(`[${bar} ${pctStr}%]`, selectedColor);
-  } else if (showBar) {
-    const bar = '█'.repeat(filled) + '░'.repeat(empty);
-    return colorize(`[${bar}]`, selectedColor);
-  } else {
-    // showPercent only
-    return colorize(`[${pctInt}%]`, selectedColor);
-  }
+    // Build output
+    if (showBar && showPercent) {
+        const bar = '█'.repeat(filled) + '░'.repeat(empty);
+        const pctStr = String(pctInt).padStart(3);
+        return colorize(`[${bar} ${pctStr}%]`, selectedColor);
+    } else if (showBar) {
+        const bar = '█'.repeat(filled) + '░'.repeat(empty);
+        return colorize(`[${bar}]`, selectedColor);
+    } else {
+        // showPercent only
+        return colorize(`[${pctInt}%]`, selectedColor);
+    }
 }

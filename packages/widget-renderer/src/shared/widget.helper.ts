@@ -16,11 +16,8 @@ import { colorize } from '../colors.js';
  * @param key - Option key
  * @returns Option value or undefined
  */
-export function getOption<T>(
-  config: WidgetConfig | undefined,
-  key: string
-): T | undefined {
-  return config?.options?.[key] as T | undefined;
+export function getOption<T>(config: WidgetConfig | undefined, key: string): T | undefined {
+    return config?.options?.[key] as T | undefined;
 }
 
 /**
@@ -34,22 +31,22 @@ export function getOption<T>(
  * @returns Content with optional label prefix: "Label: content" or just "content"
  */
 function renderWithLabel(
-  content: string,
-  config: WidgetConfig | undefined,
-  defaultLabelColor: ColorValue = 'dim'
+    content: string,
+    config: WidgetConfig | undefined,
+    defaultLabelColor: ColorValue = 'dim'
 ): string {
-  const label = getOption<string>(config, 'label');
+    const label = getOption<string>(config, 'label');
 
-  // No label configured - return content as-is
-  if (!label) {
-    return content;
-  }
+    // No label configured - return content as-is
+    if (!label) {
+        return content;
+    }
 
-  // Get label color (or use default)
-  const labelColor = getOption<ColorValue>(config, 'labelColor') ?? defaultLabelColor;
+    // Get label color (or use default)
+    const labelColor = getOption<ColorValue>(config, 'labelColor') ?? defaultLabelColor;
 
-  // Format: "Label: content" (separator included in colorized label)
-  return `${colorize(label + ':', labelColor)} ${content}`;
+    // Format: "Label: content" (separator included in colorized label)
+    return `${colorize(label + ':', labelColor)} ${content}`;
 }
 
 /**
@@ -67,30 +64,28 @@ function renderWithLabel(
  * @returns Rendered widget string or null (if naVisibility='hide')
  */
 export function renderWidgetWithLabel(
-  content: string | null,
-  config: WidgetConfig | undefined,
-  defaultColor?: ColorValue,
-  defaultLabelColor: ColorValue = 'dim'
+    content: string | null,
+    config: WidgetConfig | undefined,
+    defaultColor?: ColorValue,
+    defaultLabelColor: ColorValue = 'dim'
 ): string | null {
-  // Handle null content based on naVisibility option
-  if (content === null) {
-    const naVisibility = getOption<NaVisibility>(config, 'naVisibility') ?? 'hide';
+    // Handle null content based on naVisibility option
+    if (content === null) {
+        const naVisibility = getOption<NaVisibility>(config, 'naVisibility') ?? 'hide';
 
-    if (naVisibility === 'hide') {
-      return null; // Hide entire widget
+        if (naVisibility === 'hide') {
+            return null; // Hide entire widget
+        }
+
+        // Determine placeholder based on naVisibility
+        const placeholder = naVisibility === 'na' ? 'N/A' : naVisibility === 'dash' ? '-' : ''; // empty
+
+        // Colorize placeholder (use defaultColor or dim)
+        const colored = colorize(placeholder, defaultColor ?? 'dim');
+        return renderWithLabel(colored, config, defaultLabelColor);
     }
 
-    // Determine placeholder based on naVisibility
-    const placeholder = naVisibility === 'na' ? 'N/A' :
-                       naVisibility === 'dash' ? '-' :
-                       ''; // empty
-
-    // Colorize placeholder (use defaultColor or dim)
-    const colored = colorize(placeholder, defaultColor ?? 'dim');
-    return renderWithLabel(colored, config, defaultLabelColor);
-  }
-
-  // Normal rendering: colorize content and add label
-  const coloredContent = colorize(content, config?.color ?? defaultColor);
-  return renderWithLabel(coloredContent, config, defaultLabelColor);
+    // Normal rendering: colorize content and add label
+    const coloredContent = colorize(content, config?.color ?? defaultColor);
+    return renderWithLabel(coloredContent, config, defaultLabelColor);
 }

@@ -15,9 +15,9 @@ import type { UsageDimension } from '@cdps/widget-renderer';
  * Time constants in milliseconds for each dimension
  */
 export const TIME_CONSTANTS: Record<string, number> = {
-  '5h': 5 * 60 * 60 * 1000, // 5 hours in ms = 18000000
-  week: 7 * 24 * 60 * 60 * 1000, // 7 days in ms = 604800000
-  month: 30 * 24 * 60 * 60 * 1000, // 30 days in ms = 2592000000
+    '5h': 5 * 60 * 60 * 1000, // 5 hours in ms = 18000000
+    week: 7 * 24 * 60 * 60 * 1000, // 7 days in ms = 604800000
+    month: 30 * 24 * 60 * 60 * 1000, // 30 days in ms = 2592000000
 };
 
 // =============================================================================
@@ -30,24 +30,24 @@ export const TIME_CONSTANTS: Record<string, number> = {
  * Each dimension represents a time range for CallCount aggregation.
  */
 export const DIMENSIONS: UsageDimension[] = [
-  {
-    key: '5h',
-    label: '5 Hours',
-    description: 'Last 5 hours call count',
-    category: 'usage',
-  },
-  {
-    key: 'week',
-    label: 'Weekly',
-    description: 'Last 7 days call count',
-    category: 'usage',
-  },
-  {
-    key: 'month',
-    label: 'Monthly',
-    description: 'Last 30 days call count',
-    category: 'usage',
-  },
+    {
+        key: '5h',
+        label: '5 Hours',
+        description: 'Last 5 hours call count',
+        category: 'usage',
+    },
+    {
+        key: 'week',
+        label: 'Weekly',
+        description: 'Last 7 days call count',
+        category: 'usage',
+    },
+    {
+        key: 'month',
+        label: 'Monthly',
+        description: 'Last 30 days call count',
+        category: 'usage',
+    },
 ];
 
 // =============================================================================
@@ -62,19 +62,19 @@ export const DIMENSIONS: UsageDimension[] = [
  * @throws Error if dimension is not found
  */
 export function getTimeRange(dimension: string): {
-  startTimeMs: number;
-  endTimeMs: number;
+    startTimeMs: number;
+    endTimeMs: number;
 } {
-  const durationMs = TIME_CONSTANTS[dimension];
+    const durationMs = TIME_CONSTANTS[dimension];
 
-  if (durationMs === undefined) {
-    throw new Error(`Invalid dimension: ${dimension}`);
-  }
+    if (durationMs === undefined) {
+        throw new Error(`Invalid dimension: ${dimension}`);
+    }
 
-  const endTimeMs = Date.now();
-  const startTimeMs = endTimeMs - durationMs;
+    const endTimeMs = Date.now();
+    const startTimeMs = endTimeMs - durationMs;
 
-  return { startTimeMs, endTimeMs };
+    return { startTimeMs, endTimeMs };
 }
 
 /**
@@ -84,7 +84,7 @@ export function getTimeRange(dimension: string): {
  * @returns true if dimension is valid
  */
 export function isValidDimension(dimension: string): boolean {
-  return DIMENSIONS.some((d) => d.key === dimension);
+    return DIMENSIONS.some(d => d.key === dimension);
 }
 
 /**
@@ -94,6 +94,6 @@ export function isValidDimension(dimension: string): boolean {
  * @returns Label string or dimension key if not found
  */
 export function getDimensionLabel(dimension: string): string {
-  const found = DIMENSIONS.find((d) => d.key === dimension);
-  return found?.label ?? dimension;
+    const found = DIMENSIONS.find(d => d.key === dimension);
+    return found?.label ?? dimension;
 }

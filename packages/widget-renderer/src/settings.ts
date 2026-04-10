@@ -23,19 +23,19 @@ export const SETTINGS_PATH = join(homedir(), '.cdps', 'settings.json');
  * Theme includes standard bar colors and thresholds for usage visualization.
  */
 export const DEFAULT_SETTINGS: Settings = {
-  cacheTtl: 300000, // 5 minutes in milliseconds
-  rows: [
-    [
-      { widget: 'provider', color: 'cyan' } as WidgetConfig,
-      { widget: 'separator' } as WidgetConfig,
-      { widget: 'usage', options: { dimension: '5h', label: '5h' } } as WidgetConfig,
+    cacheTtl: 300000, // 5 minutes in milliseconds
+    rows: [
+        [
+            { widget: 'provider', color: 'cyan' } as WidgetConfig,
+            { widget: 'separator' } as WidgetConfig,
+            { widget: 'usage', options: { dimension: '5h', label: '5h' } } as WidgetConfig,
+        ],
     ],
-  ],
-  theme: {
-    barColors: { low: 'green', medium: 'yellow', high: 'red' },
-    thresholds: { low: 50, medium: 80 },
-  },
-  plain: false,
+    theme: {
+        barColors: { low: 'green', medium: 'yellow', high: 'red' },
+        thresholds: { low: 50, medium: 80 },
+    },
+    plain: false,
 };
 
 /**
@@ -47,14 +47,14 @@ export const DEFAULT_SETTINGS: Settings = {
  * @returns Promise resolving to Settings object
  */
 export async function loadSettings(): Promise<Settings> {
-  try {
-    const content = await readFile(SETTINGS_PATH, 'utf-8');
-    return JSON.parse(content) as Settings;
-  } catch {
-    // File not found, parse error, or other IO issues
-    // Return defaults to ensure app always has valid settings
-    return DEFAULT_SETTINGS;
-  }
+    try {
+        const content = await readFile(SETTINGS_PATH, 'utf-8');
+        return JSON.parse(content) as Settings;
+    } catch {
+        // File not found, parse error, or other IO issues
+        // Return defaults to ensure app always has valid settings
+        return DEFAULT_SETTINGS;
+    }
 }
 
 /**
@@ -67,7 +67,7 @@ export async function loadSettings(): Promise<Settings> {
  * @returns Promise that resolves when write is complete
  */
 export async function saveSettings(settings: Settings): Promise<void> {
-  const dir = join(homedir(), '.cdps');
-  await mkdir(dir, { recursive: true });
-  await writeFile(SETTINGS_PATH, JSON.stringify(settings, null, 2), 'utf-8');
+    const dir = join(homedir(), '.cdps');
+    await mkdir(dir, { recursive: true });
+    await writeFile(SETTINGS_PATH, JSON.stringify(settings, null, 2), 'utf-8');
 }

@@ -26,10 +26,10 @@ import { UsageWidget, UsageSchema } from './usage.widget.js';
  * Widget entry with both implementation and schema
  */
 export interface WidgetEntry {
-  /** Widget implementation */
-  widget: Widget;
-  /** Widget schema (metadata for GUI) */
-  schema: WidgetSchema;
+    /** Widget implementation */
+    widget: Widget;
+    /** Widget schema (metadata for GUI) */
+    schema: WidgetSchema;
 }
 
 /**
@@ -39,29 +39,29 @@ export interface WidgetEntry {
  * ensuring consistency between runtime behavior and configuration GUI.
  */
 export const BUILTIN_WIDGETS: Record<string, WidgetEntry> = {
-  separator: { widget: SeparatorWidget, schema: SeparatorSchema },
-  text: { widget: TextWidget, schema: TextSchema },
-  provider: { widget: ProviderWidget, schema: ProviderSchema },
-  usage: { widget: UsageWidget, schema: UsageSchema },
+    separator: { widget: SeparatorWidget, schema: SeparatorSchema },
+    text: { widget: TextWidget, schema: TextSchema },
+    provider: { widget: ProviderWidget, schema: ProviderSchema },
+    usage: { widget: UsageWidget, schema: UsageSchema },
 };
 
 /**
  * Get a widget by ID
  */
 export function getWidget(id: string): Widget | undefined {
-  return BUILTIN_WIDGETS[id]?.widget;
+    return BUILTIN_WIDGETS[id]?.widget;
 }
 
 /**
  * Get a widget's schema by ID
  */
 export function getWidgetSchema(id: string): WidgetSchema | undefined {
-  return BUILTIN_WIDGETS[id]?.schema;
+    return BUILTIN_WIDGETS[id]?.schema;
 }
 
 /**
  * Get all widget schemas
  */
 export function getAllSchemas(): WidgetSchema[] {
-  return Object.values(BUILTIN_WIDGETS).map((entry) => entry.schema);
+    return Object.values(BUILTIN_WIDGETS).map(entry => entry.schema);
 }

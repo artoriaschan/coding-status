@@ -9,9 +9,9 @@ export { AdapterLoader } from './loader.js';
 
 // Error classes
 export {
-  AdapterError,
-  AdapterNotFoundError,
-  AdapterLoadError,
-  AdapterInitError,
-  AdapterUsageError,
+    AdapterError,
+    AdapterNotFoundError,
+    AdapterLoadError,
+    AdapterInitError,
+    AdapterUsageError,
 } from './errors.js';

@@ -22,16 +22,16 @@ export const STATUSLINE_TIMEOUT_MS = 1000;
  * Allows distinguishing timeout errors from other errors.
  */
 export class TimeoutError extends Error {
-  /**
-   * Create a TimeoutError
-   *
-   * @param operation - Name of the operation that timed out
-   * @param timeoutMs - Timeout duration in milliseconds
-   */
-  constructor(operation: string, timeoutMs: number) {
-    super(`${operation} timed out after ${timeoutMs}ms`);
-    this.name = 'TimeoutError';
-  }
+    /**
+     * Create a TimeoutError
+     *
+     * @param operation - Name of the operation that timed out
+     * @param timeoutMs - Timeout duration in milliseconds
+     */
+    constructor(operation: string, timeoutMs: number) {
+        super(`${operation} timed out after ${timeoutMs}ms`);
+        this.name = 'TimeoutError';
+    }
 }
 
 // =============================================================================
@@ -50,24 +50,24 @@ export class TimeoutError extends Error {
  * @returns Result of the promise or TimeoutError on timeout
  */
 export async function withTimeout<T>(
-  promise: Promise<T>,
-  timeoutMs: number,
-  operation: string
+    promise: Promise<T>,
+    timeoutMs: number,
+    operation: string
 ): Promise<T> {
-  const controller = new AbortController();
+    const controller = new AbortController();
 
-  const timeoutId = setTimeout(() => {
-    controller.abort();
-  }, timeoutMs);
+    const timeoutId = setTimeout(() => {
+        controller.abort();
+    }, timeoutMs);
 
-  return Promise.race([
-    promise,
-    new Promise<T>((_, reject) => {
-      controller.signal.addEventListener('abort', () => {
-        reject(new TimeoutError(operation, timeoutMs));
-      });
-    }),
-  ]).finally(() => {
-    clearTimeout(timeoutId);
-  });
+    return Promise.race([
+        promise,
+        new Promise<T>((_, reject) => {
+            controller.signal.addEventListener('abort', () => {
+                reject(new TimeoutError(operation, timeoutMs));
+            });
+        }),
+    ]).finally(() => {
+        clearTimeout(timeoutId);
+    });
 }

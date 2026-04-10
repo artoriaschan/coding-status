@@ -16,38 +16,38 @@
  * These map directly to chalk's color methods.
  */
 export type ColorValue =
-  | 'black'
-  | 'red'
-  | 'green'
-  | 'yellow'
-  | 'blue'
-  | 'magenta'
-  | 'cyan'
-  | 'white'
-  | 'dim'
-  | 'bold';
+    | 'black'
+    | 'red'
+    | 'green'
+    | 'yellow'
+    | 'blue'
+    | 'magenta'
+    | 'cyan'
+    | 'white'
+    | 'dim'
+    | 'bold';
 
 /**
  * All valid color values for validation
  */
 export const VALID_COLORS: readonly ColorValue[] = [
-  'black',
-  'red',
-  'green',
-  'yellow',
-  'blue',
-  'magenta',
-  'cyan',
-  'white',
-  'dim',
-  'bold',
+    'black',
+    'red',
+    'green',
+    'yellow',
+    'blue',
+    'magenta',
+    'cyan',
+    'white',
+    'dim',
+    'bold',
 ] as const;
 
 /**
  * Check if a value is a valid ColorValue
  */
 export function isValidColor(value: unknown): value is ColorValue {
-  return typeof value === 'string' && VALID_COLORS.includes(value as ColorValue);
+    return typeof value === 'string' && VALID_COLORS.includes(value as ColorValue);
 }
 
 // =============================================================================
@@ -60,12 +60,12 @@ export function isValidColor(value: unknown): value is ColorValue {
  * Allows customizing colors based on usage percentage thresholds.
  */
 export interface UsageBarColors {
-  /** Color when usage is low (default: green) */
-  low?: ColorValue;
-  /** Color when usage is medium (default: yellow) */
-  medium?: ColorValue;
-  /** Color when usage is high (default: red) */
-  high?: ColorValue;
+    /** Color when usage is low (default: green) */
+    low?: ColorValue;
+    /** Color when usage is medium (default: yellow) */
+    medium?: ColorValue;
+    /** Color when usage is high (default: red) */
+    high?: ColorValue;
 }
 
 /**
@@ -81,16 +81,16 @@ export type DimensionCategory = 'usage' | 'balance' | 'concurrency' | 'other';
  * Used by usage widget to display specific metrics.
  */
 export interface UsageDimension {
-  /** Unique dimension key (e.g., '5h', 'week', 'month') */
-  key: string;
-  /** Human-readable label (e.g., '5 Hours', 'Weekly', 'Monthly') */
-  label: string;
-  /** Optional description for GUI display */
-  description?: string;
-  /** Optional maximum value for percentage calculation */
-  maxValue?: number;
-  /** Category for rendering classification - default 'usage' */
-  category?: DimensionCategory;
+    /** Unique dimension key (e.g., '5h', 'week', 'month') */
+    key: string;
+    /** Human-readable label (e.g., '5 Hours', 'Weekly', 'Monthly') */
+    label: string;
+    /** Optional description for GUI display */
+    description?: string;
+    /** Optional maximum value for percentage calculation */
+    maxValue?: number;
+    /** Category for rendering classification - default 'usage' */
+    category?: DimensionCategory;
 }
 
 // =============================================================================
@@ -104,14 +104,14 @@ export interface UsageDimension {
  * This is the per-instance config that goes in Settings.rows.
  */
 export interface WidgetConfig {
-  /** Widget ID (e.g., 'separator', 'text', 'provider', 'usage') */
-  widget: string;
-  /** Content color (for simple widgets) */
-  color?: ColorValue;
-  /** State-based colors (for widgets with multiple states) */
-  colors?: Record<string, ColorValue>;
-  /** Widget-specific options */
-  options?: Record<string, unknown>;
+    /** Widget ID (e.g., 'separator', 'text', 'provider', 'usage') */
+    widget: string;
+    /** Content color (for simple widgets) */
+    color?: ColorValue;
+    /** State-based colors (for widgets with multiple states) */
+    colors?: Record<string, ColorValue>;
+    /** Widget-specific options */
+    options?: Record<string, unknown>;
 }
 
 /**
@@ -120,24 +120,24 @@ export interface WidgetConfig {
  * Configuration for widget layout and rendering behavior.
  */
 export interface Settings {
-  /** Cache TTL in milliseconds (default: 30000 = 30 seconds) */
-  cacheTtl: number;
-  /** Multi-row layout configuration */
-  rows: WidgetConfig[][];
-  /** Theme settings for colors and thresholds */
-  theme?: {
-    /** Usage bar gradient colors */
-    barColors?: UsageBarColors;
-    /** Percentage thresholds for color changes */
-    thresholds?: {
-      /** Low threshold (default: 50) */
-      low?: number;
-      /** Medium threshold (default: 80) */
-      medium?: number;
+    /** Cache TTL in milliseconds (default: 30000 = 30 seconds) */
+    cacheTtl: number;
+    /** Multi-row layout configuration */
+    rows: WidgetConfig[][];
+    /** Theme settings for colors and thresholds */
+    theme?: {
+        /** Usage bar gradient colors */
+        barColors?: UsageBarColors;
+        /** Percentage thresholds for color changes */
+        thresholds?: {
+            /** Low threshold (default: 50) */
+            low?: number;
+            /** Medium threshold (default: 80) */
+            medium?: number;
+        };
     };
-  };
-  /** Plain mode flag (no ANSI colors) */
-  plain?: boolean;
+    /** Plain mode flag (no ANSI colors) */
+    plain?: boolean;
 }
 
 // =============================================================================
@@ -151,18 +151,18 @@ export interface Settings {
  * usage data, dimensions, terminal info, and settings.
  */
 export interface RenderContext {
-  /** Active provider identifier */
-  activeProvider: string;
-  /** Provider display name for rendering */
-  providerDisplayName: string;
-  /** Available usage dimensions from adapter */
-  dimensions: UsageDimension[];
-  /** Usage data by dimension key */
-  usageData: Record<string, number>;
-  /** Terminal width in columns */
-  terminalWidth: number;
-  /** User settings (optional, defaults used if not provided) */
-  settings?: Settings;
+    /** Active provider identifier */
+    activeProvider: string;
+    /** Provider display name for rendering */
+    providerDisplayName: string;
+    /** Available usage dimensions from adapter */
+    dimensions: UsageDimension[];
+    /** Usage data by dimension key */
+    usageData: Record<string, number>;
+    /** Terminal width in columns */
+    terminalWidth: number;
+    /** User settings (optional, defaults used if not provided) */
+    settings?: Settings;
 }
 
 // =============================================================================
@@ -176,15 +176,15 @@ export interface RenderContext {
  * returns either a colored string or null (to hide the widget).
  */
 export interface Widget {
-  /** Unique identifier for the widget */
-  name: string;
-  /**
-   * Render the widget content
-   * @param ctx - Render context with provider, usage, and settings
-   * @param config - Optional inline widget configuration
-   * @returns Rendered string with ANSI codes, or null if widget should be hidden
-   */
-  render(ctx: RenderContext, config?: WidgetConfig): string | null;
+    /** Unique identifier for the widget */
+    name: string;
+    /**
+     * Render the widget content
+     * @param ctx - Render context with provider, usage, and settings
+     * @param config - Optional inline widget configuration
+     * @returns Rendered string with ANSI codes, or null if widget should be hidden
+     */
+    render(ctx: RenderContext, config?: WidgetConfig): string | null;
 }
 
 // =============================================================================
@@ -199,34 +199,34 @@ export interface Widget {
  * No formatOutput - rendering stays in widget-renderer.
  */
 export interface UsageAdapter {
-  /** Machine-readable adapter identifier (e.g., 'bailian') */
-  readonly name: string;
+    /** Machine-readable adapter identifier (e.g., 'bailian') */
+    readonly name: string;
 
-  /** Human-readable display name (e.g., 'Aliyun Bailian') */
-  readonly displayName: string;
+    /** Human-readable display name (e.g., 'Aliyun Bailian') */
+    readonly displayName: string;
 
-  /**
-   * Initialize adapter with provider credentials.
-   * Validates credential structure and connectivity.
-   * @param credentials - Provider-specific credential object
-   * @throws Error if validation fails
-   */
-  init(credentials: Record<string, string>): Promise<void>;
+    /**
+     * Initialize adapter with provider credentials.
+     * Validates credential structure and connectivity.
+     * @param credentials - Provider-specific credential object
+     * @throws Error if validation fails
+     */
+    init(credentials: Record<string, string>): Promise<void>;
 
-  /**
-   * Get available usage dimensions for this adapter.
-   * Each dimension includes category for rendering classification.
-   * @returns Array of UsageDimension objects
-   */
-  getDimensions(): Promise<UsageDimension[]>;
+    /**
+     * Get available usage dimensions for this adapter.
+     * Each dimension includes category for rendering classification.
+     * @returns Array of UsageDimension objects
+     */
+    getDimensions(): Promise<UsageDimension[]>;
 
-  /**
-   * Fetch usage value for a specific dimension.
-   * @param dimension - Dimension key (e.g., '5h', 'week', 'month')
-   * @returns Usage value (e.g., call count)
-   * @throws Error if fetch fails
-   */
-  getUsage(dimension: string): Promise<number>;
+    /**
+     * Fetch usage value for a specific dimension.
+     * @param dimension - Dimension key (e.g., '5h', 'week', 'month')
+     * @returns Usage value (e.g., call count)
+     * @throws Error if fetch fails
+     */
+    getUsage(dimension: string): Promise<number>;
 }
 
 // =============================================================================
@@ -237,66 +237,66 @@ export interface UsageAdapter {
  * Widget metadata - identity and categorization
  */
 export interface WidgetMeta {
-  /** Human-readable display name (e.g., 'Separator') */
-  displayName: string;
-  /** Brief description of what the widget shows */
-  description: string;
-  /** Category this widget belongs to */
-  category: string;
+    /** Human-readable display name (e.g., 'Separator') */
+    displayName: string;
+    /** Brief description of what the widget shows */
+    description: string;
+    /** Category this widget belongs to */
+    category: string;
 }
 
 /**
  * Custom config option for widget schema
  */
 export interface WidgetCustomOption {
-  /** Option key used in options object */
-  key: string;
-  /** Option type (select, checkbox, text, color) */
-  type: string;
-  /** Display label in config panel */
-  label: string;
-  /** Default value */
-  default?: unknown;
-  /** Available choices for select type */
-  options?: Array<{ value: string; label: string }>;
-  /** Maximum length for text input (text type) */
-  maxLength?: number;
-  /** Placeholder text for text input (text type) */
-  placeholder?: string;
+    /** Option key used in options object */
+    key: string;
+    /** Option type (select, checkbox, text, color) */
+    type: string;
+    /** Display label in config panel */
+    label: string;
+    /** Default value */
+    default?: unknown;
+    /** Available choices for select type */
+    options?: Array<{ value: string; label: string }>;
+    /** Maximum length for text input (text type) */
+    maxLength?: number;
+    /** Placeholder text for text input (text type) */
+    placeholder?: string;
 }
 
 /**
  * Preview state for widget schema
  */
 export interface WidgetPreviewState {
-  /** State identifier */
-  id: string;
-  /** Display label */
-  label: string;
-  /** Description of what this state represents */
-  description?: string;
-  /** Mock data for preview */
-  mockData?: unknown;
+    /** State identifier */
+    id: string;
+    /** Display label */
+    label: string;
+    /** Description of what this state represents */
+    description?: string;
+    /** Mock data for preview */
+    mockData?: unknown;
 }
 
 /**
  * Widget options configuration for schema
  */
 export interface WidgetOptionsConfig {
-  /** Content color options */
-  content?: {
-    /** Default content color */
-    color?: ColorValue;
-  };
-  /** Usage bar options */
-  bar?: {
-    /** Whether bar is enabled */
-    enabled?: boolean;
-    /** Bar gradient colors */
-    colors?: UsageBarColors;
-  };
-  /** Custom widget-specific options */
-  custom?: WidgetCustomOption[];
+    /** Content color options */
+    content?: {
+        /** Default content color */
+        color?: ColorValue;
+    };
+    /** Usage bar options */
+    bar?: {
+        /** Whether bar is enabled */
+        enabled?: boolean;
+        /** Bar gradient colors */
+        colors?: UsageBarColors;
+    };
+    /** Custom widget-specific options */
+    custom?: WidgetCustomOption[];
 }
 
 /**
@@ -310,14 +310,14 @@ export interface WidgetOptionsConfig {
  * - Default values
  */
 export interface WidgetSchema {
-  /** Unique widget identifier */
-  id: string;
-  /** Widget metadata (display name, description, category) */
-  meta: WidgetMeta;
-  /** Widget configuration options */
-  options?: WidgetOptionsConfig;
-  /** Preview states for testing */
-  previewStates?: WidgetPreviewState[];
+    /** Unique widget identifier */
+    id: string;
+    /** Widget metadata (display name, description, category) */
+    meta: WidgetMeta;
+    /** Widget configuration options */
+    options?: WidgetOptionsConfig;
+    /** Preview states for testing */
+    previewStates?: WidgetPreviewState[];
 }
 
 // =============================================================================

@@ -17,10 +17,10 @@ process.env.FORCE_COLOR = '1';
 
 // Dynamic import ensures FORCE_COLOR is set first
 import('./cli.js')
-  .then(({ cli }) => {
-    cli(process.argv.slice(2));
-  })
-  .catch((error) => {
-    console.error('Failed to start CLI:', error);
-    process.exit(1);
-  });
+    .then(({ cli }) => {
+        cli(process.argv.slice(2));
+    })
+    .catch(error => {
+        console.error('Failed to start CLI:', error);
+        process.exit(1);
+    });

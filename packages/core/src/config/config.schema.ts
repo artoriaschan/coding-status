@@ -14,13 +14,13 @@ import { z } from 'zod';
  * First version only supports 'bailian' type (D-15).
  */
 export const ProviderSchema = z.object({
-  name: z
-    .string()
-    .min(1, 'Provider name is required')
-    .max(32, 'Provider name too long (max 32 chars)'),
-  type: z.enum(['bailian']), // D-15: first version only bailian
-  packageName: z.string().min(1, 'Package name is required'),
-  credentials: z.record(z.string(), z.string()), // Flexible credentials object
+    name: z
+        .string()
+        .min(1, 'Provider name is required')
+        .max(32, 'Provider name too long (max 32 chars)'),
+    type: z.enum(['bailian']), // D-15: first version only bailian
+    packageName: z.string().min(1, 'Package name is required'),
+    credentials: z.record(z.string(), z.string()), // Flexible credentials object
 });
 
 /**
@@ -29,9 +29,9 @@ export const ProviderSchema = z.object({
  * Validates the overall configuration file structure.
  */
 export const ConfigSchema = z.object({
-  providers: z.array(ProviderSchema).default([]),
-  current: z.string().optional(), // Name reference to active provider
-  cacheTtl: z.number().int().positive().default(300), // D-11: default 300 seconds (5 minutes)
+    providers: z.array(ProviderSchema).default([]),
+    current: z.string().optional(), // Name reference to active provider
+    cacheTtl: z.number().int().positive().default(300), // D-11: default 300 seconds (5 minutes)
 });
 
 /**

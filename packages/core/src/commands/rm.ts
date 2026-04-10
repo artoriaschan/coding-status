@@ -25,38 +25,38 @@ import { loadConfig, saveConfig } from '../config/index.js';
  * @param program - Commander program instance
  */
 export function registerRm(program: Command): void {
-  program
-    .command('rm <provider>')
-    .alias('remove')
-    .description('Remove a provider configuration')
-    .action(async (providerName: string) => {
-      const config = await loadConfig();
+    program
+        .command('rm <provider>')
+        .alias('remove')
+        .description('Remove a provider configuration')
+        .action(async (providerName: string) => {
+            const config = await loadConfig();
 
-      // Validate provider exists
-      const providerIndex = config.providers.findIndex((p) => p.name === providerName);
-      if (providerIndex === -1) {
-        console.log(chalk.red(`Error: Provider "${providerName}" not found.`));
-        console.log('Run `cdps list` to see available providers.');
-        return;
-      }
+            // Validate provider exists
+            const providerIndex = config.providers.findIndex(p => p.name === providerName);
+            if (providerIndex === -1) {
+                console.log(chalk.red(`Error: Provider "${providerName}" not found.`));
+                console.log('Run `cdps list` to see available providers.');
+                return;
+            }
 
-      // Check if provider is current (cannot delete active provider)
-      if (config.current === providerName) {
-        console.log(chalk.red(`Error: Cannot delete current provider "${providerName}".`));
-        console.log('Run `cdps use <other-provider>` to switch first.');
-        return;
-      }
+            // Check if provider is current (cannot delete active provider)
+            if (config.current === providerName) {
+                console.log(chalk.red(`Error: Cannot delete current provider "${providerName}".`));
+                console.log('Run `cdps use <other-provider>` to switch first.');
+                return;
+            }
 
-      // Remove provider from array
-      config.providers.splice(providerIndex, 1);
+            // Remove provider from array
+            config.providers.splice(providerIndex, 1);
 
-      // If this was somehow the current (edge case), clear it
-      if (config.current === providerName) {
-        config.current = config.providers.length > 0 ? config.providers[0].name : undefined;
-      }
+            // If this was somehow the current (edge case), clear it
+            if (config.current === providerName) {
+                config.current = config.providers.length > 0 ? config.providers[0].name : undefined;
+            }
 
-      await saveConfig(config);
+            await saveConfig(config);
 
-      console.log(chalk.green(`Provider "${providerName}" removed.`));
-    });
+            console.log(chalk.green(`Provider "${providerName}" removed.`));
+        });
 }

@@ -34,22 +34,22 @@ export const PERIOD = '300';
  * DescribeMetricList response datapoint structure
  */
 interface Datapoint {
-  timestamp: number;
-  value: number;
+    timestamp: number;
+    value: number;
 }
 
 /**
  * DescribeMetricList response body structure
  */
 interface DescribeMetricListResponseBody {
-  datapoints: string;
+    datapoints: string;
 }
 
 /**
  * DescribeMetricList response structure
  */
 interface DescribeMetricListResponse {
-  body: DescribeMetricListResponseBody;
+    body: DescribeMetricListResponseBody;
 }
 
 /**
@@ -58,10 +58,10 @@ interface DescribeMetricListResponse {
  * Defined as interface to work around CommonJS/ESM interop issues.
  */
 export interface CmsClient {
-  describeMetricListWithOptions(
-    request: unknown,
-    runtime: unknown
-  ): Promise<DescribeMetricListResponse>;
+    describeMetricListWithOptions(
+        request: unknown,
+        runtime: unknown
+    ): Promise<DescribeMetricListResponse>;
 }
 
 // =============================================================================
@@ -77,22 +77,24 @@ export interface CmsClient {
  * @returns CMS SDK client instance
  */
 export async function createClient(credentials: {
-  accessKeyId: string;
-  accessKeySecret: string;
+    accessKeyId: string;
+    accessKeySecret: string;
 }): Promise<CmsClient> {
-  // Dynamic import to handle CommonJS SDK
-  const CmsModule = await import('@alicloud/cms20190101');
+    // Dynamic import to handle CommonJS SDK
+    const CmsModule = await import('@alicloud/cms20190101');
 
-  const config = new $OpenApiUtil.Config({
-    accessKeyId: credentials.accessKeyId,
-    accessKeySecret: credentials.accessKeySecret,
-  });
+    const config = new $OpenApiUtil.Config({
+        accessKeyId: credentials.accessKeyId,
+        accessKeySecret: credentials.accessKeySecret,
+    });
 
-  config.endpoint = ENDPOINT;
+    config.endpoint = ENDPOINT;
 
-  // Use unknown cast to work around TypeScript CommonJS/ESM interop
-  const ClientConstructor = (CmsModule as unknown as { default: new (config: unknown) => CmsClient }).default;
-  return new ClientConstructor(config);
+    // Use unknown cast to work around TypeScript CommonJS/ESM interop
+    const ClientConstructor = (
+        CmsModule as unknown as { default: new (config: unknown) => CmsClient }
+    ).default;
+    return new ClientConstructor(config);
 }
 
 /**
@@ -104,25 +106,25 @@ export async function createClient(credentials: {
  * @returns Total call count for the time range
  */
 export async function fetchCallCount(
-  client: CmsClient,
-  startTimeMs: number,
-  endTimeMs: number
+    client: CmsClient,
+    startTimeMs: number,
+    endTimeMs: number
 ): Promise<number> {
-  const request = {
-    namespace: NAMESPACE,
-    metricName: METRIC_NAME,
-    period: PERIOD,
-    startTime: new Date(startTimeMs).toISOString(),
-    endTime: new Date(endTimeMs).toISOString(),
-  };
+    const request = {
+        namespace: NAMESPACE,
+        metricName: METRIC_NAME,
+        period: PERIOD,
+        startTime: new Date(startTimeMs).toISOString(),
+        endTime: new Date(endTimeMs).toISOString(),
+    };
 
-  const response = await client.describeMetricListWithOptions(request, {});
+    const response = await client.describeMetricListWithOptions(request, {});
 
-  // Parse datapoints JSON
-  const datapoints = JSON.parse(response.body.datapoints) as Datapoint[];
+    // Parse datapoints JSON
+    const datapoints = JSON.parse(response.body.datapoints) as Datapoint[];
 
-  // Aggregate: sum all datapoint values
-  return datapoints.reduce((sum, dp) => sum + dp.value, 0);
+    // Aggregate: sum all datapoint values
+    return datapoints.reduce((sum, dp) => sum + dp.value, 0);
 }
 
 /**
@@ -137,24 +139,24 @@ export async function fetchCallCount(
  * @returns Result of the promise or timeout error
  */
 export async function withTimeout<T>(
-  promise: Promise<T>,
-  timeoutMs: number,
-  operation: string
+    promise: Promise<T>,
+    timeoutMs: number,
+    operation: string
 ): Promise<T> {
-  const controller = new AbortController();
+    const controller = new AbortController();
 
-  const timeoutId = setTimeout(() => {
-    controller.abort();
-  }, timeoutMs);
+    const timeoutId = setTimeout(() => {
+        controller.abort();
+    }, timeoutMs);
 
-  return Promise.race([
-    promise,
-    new Promise<T>((_, reject) => {
-      controller.signal.addEventListener('abort', () => {
-        reject(new Error(`${operation} timed out after ${timeoutMs}ms`));
-      });
-    }),
-  ]).finally(() => {
-    clearTimeout(timeoutId);
-  });
+    return Promise.race([
+        promise,
+        new Promise<T>((_, reject) => {
+            controller.signal.addEventListener('abort', () => {
+                reject(new Error(`${operation} timed out after ${timeoutMs}ms`));
+            });
+        }),
+    ]).finally(() => {
+        clearTimeout(timeoutId);
+    });
 }

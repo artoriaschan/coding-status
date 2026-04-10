@@ -26,7 +26,7 @@ const STATUSLINE_COMMAND = 'cdps statusline';
  * Claude Code settings.json structure
  */
 interface ClaudeSettings {
-  [key: string]: unknown;
+    [key: string]: unknown;
 }
 
 /**
@@ -41,47 +41,47 @@ interface ClaudeSettings {
  * @throws Error if file read/write fails or JSON is malformed
  */
 export async function updateClaudeSettings(): Promise<boolean> {
-  // 1. Check if settings.json exists
-  if (!existsSync(CLAUDE_SETTINGS_PATH)) {
-    return false;
-  }
-
-  // 2. Read current settings
-  let settings: ClaudeSettings;
-  try {
-    const content = readFileSync(CLAUDE_SETTINGS_PATH, 'utf-8');
-    settings = JSON.parse(content) as ClaudeSettings;
-  } catch (error) {
-    throw new Error(
-      `Failed to read Claude Code settings.json: ${error instanceof Error ? error.message : String(error)}`,
-    );
-  }
-
-  // 3. Remove all statusline entries (case-insensitive) - per D-18
-  const keysToRemove: string[] = [];
-  for (const key in settings) {
-    if (key.toLowerCase() === 'statusline') {
-      keysToRemove.push(key);
+    // 1. Check if settings.json exists
+    if (!existsSync(CLAUDE_SETTINGS_PATH)) {
+        return false;
     }
-  }
-  for (const key of keysToRemove) {
-    delete settings[key];
-  }
 
-  // 4. Add correct statusLine configuration - per D-17
-  settings.statusLine = {
-    type: 'command',
-    command: STATUSLINE_COMMAND,
-  };
+    // 2. Read current settings
+    let settings: ClaudeSettings;
+    try {
+        const content = readFileSync(CLAUDE_SETTINGS_PATH, 'utf-8');
+        settings = JSON.parse(content) as ClaudeSettings;
+    } catch (error) {
+        throw new Error(
+            `Failed to read Claude Code settings.json: ${error instanceof Error ? error.message : String(error)}`
+        );
+    }
 
-  // 5. Write back to settings.json with newline at end
-  try {
-    writeFileSync(CLAUDE_SETTINGS_PATH, JSON.stringify(settings, null, 2) + '\n', 'utf-8');
-  } catch (error) {
-    throw new Error(
-      `Failed to write Claude Code settings.json: ${error instanceof Error ? error.message : String(error)}`,
-    );
-  }
+    // 3. Remove all statusline entries (case-insensitive) - per D-18
+    const keysToRemove: string[] = [];
+    for (const key in settings) {
+        if (key.toLowerCase() === 'statusline') {
+            keysToRemove.push(key);
+        }
+    }
+    for (const key of keysToRemove) {
+        delete settings[key];
+    }
 
-  return true;
+    // 4. Add correct statusLine configuration - per D-17
+    settings.statusLine = {
+        type: 'command',
+        command: STATUSLINE_COMMAND,
+    };
+
+    // 5. Write back to settings.json with newline at end
+    try {
+        writeFileSync(CLAUDE_SETTINGS_PATH, JSON.stringify(settings, null, 2) + '\n', 'utf-8');
+    } catch (error) {
+        throw new Error(
+            `Failed to write Claude Code settings.json: ${error instanceof Error ? error.message : String(error)}`
+        );
+    }
+
+    return true;
 }

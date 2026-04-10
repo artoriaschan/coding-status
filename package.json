@@ -1,62 +1,62 @@
 {
-  "name": "cdps-monorepo",
-  "version": "0.0.1",
-  "description": "CDPS - Cloud provider usage statusline for Claude Code",
-  "private": true,
-  "type": "module",
-  "packageManager": "pnpm@10.33.0",
-  "engines": {
-    "node": ">=18.0.0"
-  },
-  "scripts": {
-    "prepare": "husky",
-    "build": "turbo build",
-    "dev": "turbo dev",
-    "test": "vitest",
-    "test:run": "vitest --run",
-    "test:coverage": "vitest --coverage",
-    "lint": "pnpm lint:eslint && pnpm lint:sheriff",
-    "lint:eslint": "eslint packages/*/src/**/*.ts",
-    "lint:sheriff": "sheriff verify",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
-    "changeset": "changeset",
-    "version": "changeset version",
-    "release": "pnpm build && changeset publish"
-  },
-  "lint-staged": {
-    "*.{ts,tsx}": [
-      "eslint --fix",
-      "prettier --write"
+    "name": "cdps-monorepo",
+    "version": "0.0.1",
+    "description": "CDPS - Cloud provider usage statusline for Claude Code",
+    "private": true,
+    "type": "module",
+    "packageManager": "pnpm@10.33.0",
+    "engines": {
+        "node": ">=18.0.0"
+    },
+    "scripts": {
+        "prepare": "husky",
+        "build": "turbo build",
+        "dev": "turbo dev",
+        "test": "vitest",
+        "test:run": "vitest --run",
+        "test:coverage": "vitest --coverage",
+        "lint": "pnpm lint:eslint && pnpm lint:sheriff",
+        "lint:eslint": "eslint packages/*/src/**/*.ts",
+        "lint:sheriff": "sheriff verify",
+        "format": "prettier --write .",
+        "format:check": "prettier --check .",
+        "changeset": "changeset",
+        "version": "changeset version",
+        "release": "pnpm build && changeset publish"
+    },
+    "lint-staged": {
+        "*.{ts,tsx}": [
+            "eslint --fix",
+            "prettier --write"
+        ],
+        "*.{json,md,yml,yaml}": [
+            "prettier --write"
+        ]
+    },
+    "devDependencies": {
+        "@changesets/cli": "^2.27.0",
+        "@eslint/js": "^10.0.1",
+        "@softarc/eslint-plugin-sheriff": "^0.19.6",
+        "@softarc/sheriff-core": "^0.19.6",
+        "@types/node": "^20.11.0",
+        "@vitest/coverage-v8": "^3.1.1",
+        "eslint": "^10.1.0",
+        "eslint-config-prettier": "^10.1.8",
+        "eslint-plugin-import": "^2.31.0",
+        "husky": "^9.1.7",
+        "lint-staged": "^16.4.0",
+        "prettier": "^3.8.1",
+        "turbo": "^2.9.3",
+        "typescript": "^5.4.5",
+        "typescript-eslint": "^8.28.0",
+        "vitest": "^4.1.2"
+    },
+    "keywords": [
+        "claude-code",
+        "statusline",
+        "cloud-usage",
+        "aliyun",
+        "bailian"
     ],
-    "*.{json,md,yml,yaml}": [
-      "prettier --write"
-    ]
-  },
-  "devDependencies": {
-    "@changesets/cli": "^2.27.0",
-    "@eslint/js": "^10.0.1",
-    "@softarc/eslint-plugin-sheriff": "^0.19.6",
-    "@softarc/sheriff-core": "^0.19.6",
-    "@types/node": "^20.11.0",
-    "@vitest/coverage-v8": "^3.1.1",
-    "eslint": "^10.1.0",
-    "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-import": "^2.31.0",
-    "husky": "^9.1.7",
-    "lint-staged": "^16.4.0",
-    "prettier": "^3.8.1",
-    "turbo": "^2.9.3",
-    "typescript": "^5.4.5",
-    "typescript-eslint": "^8.28.0",
-    "vitest": "^4.1.2"
-  },
-  "keywords": [
-    "claude-code",
-    "statusline",
-    "cloud-usage",
-    "aliyun",
-    "bailian"
-  ],
-  "license": "MIT"
+    "license": "MIT"
 }

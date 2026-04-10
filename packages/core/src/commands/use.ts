@@ -23,24 +23,24 @@ import { loadConfig, saveConfig } from '../config/index.js';
  * @param program - Commander program instance
  */
 export function registerUse(program: Command): void {
-  program
-    .command('use <provider>')
-    .description('Switch to a different provider')
-    .action(async (providerName: string) => {
-      const config = await loadConfig();
+    program
+        .command('use <provider>')
+        .description('Switch to a different provider')
+        .action(async (providerName: string) => {
+            const config = await loadConfig();
 
-      // Validate provider exists
-      const provider = config.providers.find((p) => p.name === providerName);
-      if (!provider) {
-        console.log(chalk.red(`Error: Provider "${providerName}" not found.`));
-        console.log('Run `cdps list` to see available providers.');
-        return;
-      }
+            // Validate provider exists
+            const provider = config.providers.find(p => p.name === providerName);
+            if (!provider) {
+                console.log(chalk.red(`Error: Provider "${providerName}" not found.`));
+                console.log('Run `cdps list` to see available providers.');
+                return;
+            }
 
-      // Update current provider
-      config.current = providerName;
-      await saveConfig(config);
+            // Update current provider
+            config.current = providerName;
+            await saveConfig(config);
 
-      console.log(chalk.green(`Switched to provider "${providerName}".`));
-    });
+            console.log(chalk.green(`Switched to provider "${providerName}".`));
+        });
 }

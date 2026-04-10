@@ -16,9 +16,9 @@ import { CONFIG_DIR, CONFIG_PATH } from './paths.js';
  * Used when config file doesn't exist or is invalid.
  */
 const DEFAULT_CONFIG: Config = {
-  providers: [],
-  current: undefined,
-  cacheTtl: 300,
+    providers: [],
+    current: undefined,
+    cacheTtl: 300,
 };
 
 /**
@@ -30,15 +30,15 @@ const DEFAULT_CONFIG: Config = {
  * @returns Promise resolving to Config object
  */
 export async function loadConfig(): Promise<Config> {
-  try {
-    const content = await readFile(CONFIG_PATH, 'utf-8');
-    const parsed = JSON.parse(content);
-    return ConfigSchema.parse(parsed);
-  } catch {
-    // File not found, parse error, or validation error
-    // Return default config per research pattern
-    return ConfigSchema.parse(DEFAULT_CONFIG);
-  }
+    try {
+        const content = await readFile(CONFIG_PATH, 'utf-8');
+        const parsed = JSON.parse(content);
+        return ConfigSchema.parse(parsed);
+    } catch {
+        // File not found, parse error, or validation error
+        // Return default config per research pattern
+        return ConfigSchema.parse(DEFAULT_CONFIG);
+    }
 }
 
 /**
@@ -52,14 +52,14 @@ export async function loadConfig(): Promise<Config> {
  * @returns Promise that resolves when write is complete
  */
 export async function saveConfig(config: Config): Promise<void> {
-  // Ensure directory exists (per D-16)
-  await mkdir(CONFIG_DIR, { recursive: true });
+    // Ensure directory exists (per D-16)
+    await mkdir(CONFIG_DIR, { recursive: true });
 
-  // Write config as formatted JSON
-  await writeFile(CONFIG_PATH, JSON.stringify(config, null, 2), 'utf-8');
+    // Write config as formatted JSON
+    await writeFile(CONFIG_PATH, JSON.stringify(config, null, 2), 'utf-8');
 
-  // Set permissions to 600 per D-12 (credentials protection)
-  await chmod(CONFIG_PATH, 0o600);
+    // Set permissions to 600 per D-12 (credentials protection)
+    await chmod(CONFIG_PATH, 0o600);
 }
 
 /**
@@ -70,5 +70,5 @@ export async function saveConfig(config: Config): Promise<void> {
  * @returns Config directory path
  */
 export function getConfigDir(): string {
-  return CONFIG_DIR;
+    return CONFIG_DIR;
 }

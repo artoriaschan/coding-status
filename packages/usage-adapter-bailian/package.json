@@ -1,35 +1,35 @@
 {
-  "name": "@cdps/usage-adapter-bailian",
-  "version": "0.0.1",
-  "description": "Aliyun Bailian usage adapter for CDPS",
-  "type": "module",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
-    }
-  },
-  "scripts": {
-    "build": "tsc",
-    "prepublishOnly": "pnpm build"
-  },
-  "dependencies": {
-    "@cdps/widget-renderer": "workspace:*",
-    "@cdps/core": "workspace:*",
-    "@alicloud/cms20190101": "^4.0.0",
-    "@alicloud/openapi-core": "^1.0.0"
-  },
-  "devDependencies": {
-    "@types/node": "^20.11.0",
-    "typescript": "^5.4.2"
-  },
-  "keywords": [
-    "cdps",
-    "adapter",
-    "bailian",
-    "aliyun"
-  ],
-  "license": "MIT"
+    "name": "@cdps/usage-adapter-bailian",
+    "version": "0.0.1",
+    "description": "Aliyun Bailian usage adapter for CDPS",
+    "type": "module",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "import": "./dist/index.js",
+            "types": "./dist/index.d.ts"
+        }
+    },
+    "scripts": {
+        "build": "tsc",
+        "prepublishOnly": "pnpm build"
+    },
+    "dependencies": {
+        "@cdps/widget-renderer": "workspace:*",
+        "@cdps/core": "workspace:*",
+        "@alicloud/cms20190101": "^4.0.0",
+        "@alicloud/openapi-core": "^1.0.0"
+    },
+    "devDependencies": {
+        "@types/node": "^20.11.0",
+        "typescript": "^5.4.2"
+    },
+    "keywords": [
+        "cdps",
+        "adapter",
+        "bailian",
+        "aliyun"
+    ],
+    "license": "MIT"
 }

@@ -14,38 +14,38 @@ import { getOption } from '../shared/widget.helper.js';
 
 /** Text widget schema - defines all GUI metadata */
 export const TextSchema: WidgetSchema = {
-  id: 'text',
-  meta: {
-    displayName: 'Text',
-    description: 'Static text with optional color',
-    category: 'layout',
-  },
-  options: {
-    content: { color: 'white' },
-    custom: [
-      {
-        key: 'text',
-        type: 'text',
-        label: 'Text Content',
-        default: '',
-        maxLength: 100,
-        placeholder: 'Enter custom text, emoji, or Unicode...',
-      },
-    ],
-  },
+    id: 'text',
+    meta: {
+        displayName: 'Text',
+        description: 'Static text with optional color',
+        category: 'layout',
+    },
+    options: {
+        content: { color: 'white' },
+        custom: [
+            {
+                key: 'text',
+                type: 'text',
+                label: 'Text Content',
+                default: '',
+                maxLength: 100,
+                placeholder: 'Enter custom text, emoji, or Unicode...',
+            },
+        ],
+    },
 };
 
 export const TextWidget: Widget = {
-  name: 'text',
+    name: 'text',
 
-  render(_ctx: RenderContext, config?: WidgetConfig): string | null {
-    const text = getOption<string>(config, 'text');
+    render(_ctx: RenderContext, config?: WidgetConfig): string | null {
+        const text = getOption<string>(config, 'text');
 
-    // Return null if no text configured (empty string, undefined, or whitespace-only)
-    // Note: whitespace-only text is allowed (user might want spacing)
-    if (!text) return null;
+        // Return null if no text configured (empty string, undefined, or whitespace-only)
+        // Note: whitespace-only text is allowed (user might want spacing)
+        if (!text) return null;
 
-    // Apply color
-    return colorize(text, config?.color);
-  },
+        // Apply color
+        return colorize(text, config?.color);
+    },
 };

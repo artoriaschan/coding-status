@@ -35,10 +35,10 @@ const ColorEnumSchema = z.enum(VALID_COLORS as [ColorValue, ...ColorValue[]]);
  * Validates each widget instance in the rows array.
  */
 export const WidgetConfigSchema = z.object({
-  widget: WidgetTypeEnum,
-  color: ColorEnumSchema.optional(),
-  colors: z.record(z.string(), ColorEnumSchema).optional(),
-  options: z.record(z.string(), z.unknown()).optional(),
+    widget: WidgetTypeEnum,
+    color: ColorEnumSchema.optional(),
+    colors: z.record(z.string(), ColorEnumSchema).optional(),
+    options: z.record(z.string(), z.unknown()).optional(),
 });
 
 // =============================================================================
@@ -49,17 +49,17 @@ export const WidgetConfigSchema = z.object({
  * Usage bar colors schema
  */
 const UsageBarColorsSchema = z.object({
-  low: ColorEnumSchema.optional(),
-  medium: ColorEnumSchema.optional(),
-  high: ColorEnumSchema.optional(),
+    low: ColorEnumSchema.optional(),
+    medium: ColorEnumSchema.optional(),
+    high: ColorEnumSchema.optional(),
 });
 
 /**
  * Thresholds schema with range validation (0-100)
  */
 const ThresholdsSchema = z.object({
-  low: z.number().int().min(0).max(100).optional(),
-  medium: z.number().int().min(0).max(100).optional(),
+    low: z.number().int().min(0).max(100).optional(),
+    medium: z.number().int().min(0).max(100).optional(),
 });
 
 /**
@@ -68,23 +68,23 @@ const ThresholdsSchema = z.object({
  * Ensures thresholds.low < thresholds.medium when both are present.
  */
 export const ThemeSchema = z
-  .object({
-    barColors: UsageBarColorsSchema.optional(),
-    thresholds: ThresholdsSchema.optional(),
-  })
-  .refine(
-    (data) => {
-      // Only validate when both thresholds are present
-      if (data.thresholds?.low !== undefined && data.thresholds?.medium !== undefined) {
-        return data.thresholds.low < data.thresholds.medium;
-      }
-      return true;
-    },
-    {
-      message: 'Thresholds must satisfy: low < medium',
-      path: ['thresholds'],
-    }
-  );
+    .object({
+        barColors: UsageBarColorsSchema.optional(),
+        thresholds: ThresholdsSchema.optional(),
+    })
+    .refine(
+        data => {
+            // Only validate when both thresholds are present
+            if (data.thresholds?.low !== undefined && data.thresholds?.medium !== undefined) {
+                return data.thresholds.low < data.thresholds.medium;
+            }
+            return true;
+        },
+        {
+            message: 'Thresholds must satisfy: low < medium',
+            path: ['thresholds'],
+        }
+    );
 
 // =============================================================================
 // Settings Schema (D-12)
@@ -97,10 +97,10 @@ export const ThemeSchema = z
  * Default cacheTtl is 300000 milliseconds (5 minutes).
  */
 export const SettingsSchema = z.object({
-  cacheTtl: z.number().int().positive().default(300000),
-  rows: z.array(z.array(WidgetConfigSchema)).default([]),
-  theme: ThemeSchema.optional(),
-  plain: z.boolean().default(false),
+    cacheTtl: z.number().int().positive().default(300000),
+    rows: z.array(z.array(WidgetConfigSchema)).default([]),
+    theme: ThemeSchema.optional(),
+    plain: z.boolean().default(false),
 });
 
 // =============================================================================

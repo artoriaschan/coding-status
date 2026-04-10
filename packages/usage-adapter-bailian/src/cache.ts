@@ -23,12 +23,12 @@ const DEFAULT_TTL = 300;
  * and usage data for all three dimensions.
  */
 export interface CacheEntry {
-  createdAt: number; // Unix timestamp (milliseconds)
-  data: {
-    '5h': number;
-    'week': number;
-    'month': number;
-  };
+    createdAt: number; // Unix timestamp (milliseconds)
+    data: {
+        '5h': number;
+        week: number;
+        month: number;
+    };
 }
 
 /**
@@ -40,7 +40,7 @@ export interface CacheEntry {
  * @returns Full path to cache file
  */
 export function getCachePath(providerName: string): string {
-  return join(CACHE_DIR, `provider-${providerName}.json`);
+    return join(CACHE_DIR, `provider-${providerName}.json`);
 }
 
 /**
@@ -56,25 +56,25 @@ export function getCachePath(providerName: string): string {
  * @returns Cache entry or null if unavailable/expired
  */
 export async function loadCache(
-  providerName: string,
-  ttlSeconds: number = DEFAULT_TTL,
+    providerName: string,
+    ttlSeconds: number = DEFAULT_TTL
 ): Promise<CacheEntry | null> {
-  try {
-    const path = getCachePath(providerName);
-    const content = await readFile(path, 'utf-8');
-    const cache = JSON.parse(content) as CacheEntry;
+    try {
+        const path = getCachePath(providerName);
+        const content = await readFile(path, 'utf-8');
+        const cache = JSON.parse(content) as CacheEntry;
 
-    // Check TTL: createdAt + ttlSeconds must be > now
-    const expiresAt = cache.createdAt + ttlSeconds * 1000;
-    if (Date.now() >= expiresAt) {
-      return null; // Cache expired
+        // Check TTL: createdAt + ttlSeconds must be > now
+        const expiresAt = cache.createdAt + ttlSeconds * 1000;
+        if (Date.now() >= expiresAt) {
+            return null; // Cache expired
+        }
+
+        return cache;
+    } catch {
+        // Silently fail - cache may not exist or be corrupted
+        return null;
     }
-
-    return cache;
-  } catch {
-    // Silently fail - cache may not exist or be corrupted
-    return null;
-  }
 }
 
 /**
@@ -86,25 +86,22 @@ export async function loadCache(
  * @param providerName - Provider name
  * @param data - Usage data for all dimensions
  */
-export async function saveCache(
-  providerName: string,
-  data: CacheEntry['data'],
-): Promise<void> {
-  try {
-    const cache: CacheEntry = {
-      createdAt: Date.now(),
-      data,
-    };
+export async function saveCache(providerName: string, data: CacheEntry['data']): Promise<void> {
+    try {
+        const cache: CacheEntry = {
+            createdAt: Date.now(),
+            data,
+        };
 
-    // Ensure directory exists
-    await mkdir(CACHE_DIR, { recursive: true });
+        // Ensure directory exists
+        await mkdir(CACHE_DIR, { recursive: true });
 
-    // Write cache file
-    const path = getCachePath(providerName);
-    await writeFile(path, JSON.stringify(cache, null, 2), 'utf-8');
-  } catch {
-    // Silently fail - cache is not critical
-  }
+        // Write cache file
+        const path = getCachePath(providerName);
+        await writeFile(path, JSON.stringify(cache, null, 2), 'utf-8');
+    } catch {
+        // Silently fail - cache is not critical
+    }
 }
 
 /**
@@ -115,11 +112,11 @@ export async function saveCache(
  * @returns True if cache is valid
  */
 export function isCacheValid(cache: CacheEntry | null, ttlSeconds: number): boolean {
-  if (!cache) return false;
+    if (!cache) return false;
 
-  // Check TTL: createdAt + ttlSeconds must be > now
-  const expiresAt = cache.createdAt + ttlSeconds * 1000;
-  return Date.now() < expiresAt;
+    // Check TTL: createdAt + ttlSeconds must be > now
+    const expiresAt = cache.createdAt + ttlSeconds * 1000;
+    return Date.now() < expiresAt;
 }
 
 /**
@@ -130,10 +127,10 @@ export function isCacheValid(cache: CacheEntry | null, ttlSeconds: number): bool
  * @param providerName - Provider name
  */
 export async function clearCache(providerName: string): Promise<void> {
-  try {
-    const path = getCachePath(providerName);
-    await unlink(path);
-  } catch {
-    // Silently fail - file may not exist
-  }
+    try {
+        const path = getCachePath(providerName);
+        await unlink(path);
+    } catch {
+        // Silently fail - file may not exist
+    }
 }
