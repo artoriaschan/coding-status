@@ -37,8 +37,7 @@ Thumbs.db
 # Claude Code
 .claude/
 
-# External references
-third_parts/
-
 # Changesets (keep the config, ignore generated files)
 # .changeset/*.md  (uncomment to ignore generated changeset files)
+
+.npmrc
