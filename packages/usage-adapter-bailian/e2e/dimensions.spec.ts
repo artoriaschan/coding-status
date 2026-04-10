@@ -76,7 +76,8 @@ describe('getTimeRange', () => {
         const range = getTimeRange('5h');
 
         expect(range.endTimeMs).toBeGreaterThanOrEqual(now);
-        expect(range.startTimeMs).toBeLessThanOrEqual(now - TIME_CONSTANTS['5h']);
+        // Allow 1 second tolerance for race condition between now capture and getTimeRange internal Date.now()
+        expect(range.startTimeMs).toBeLessThanOrEqual(now - TIME_CONSTANTS['5h'] + 1000);
         // Verify approximate range (within 1 second tolerance)
         expect(range.endTimeMs - range.startTimeMs).toBeGreaterThanOrEqual(
             TIME_CONSTANTS['5h'] - 1000
@@ -91,7 +92,8 @@ describe('getTimeRange', () => {
         const range = getTimeRange('week');
 
         expect(range.endTimeMs).toBeGreaterThanOrEqual(now);
-        expect(range.startTimeMs).toBeLessThanOrEqual(now - TIME_CONSTANTS['week']);
+        // Allow 1 second tolerance for race condition
+        expect(range.startTimeMs).toBeLessThanOrEqual(now - TIME_CONSTANTS['week'] + 1000);
     });
 
     it('should return correct time range for month dimension', () => {
@@ -99,7 +101,8 @@ describe('getTimeRange', () => {
         const range = getTimeRange('month');
 
         expect(range.endTimeMs).toBeGreaterThanOrEqual(now);
-        expect(range.startTimeMs).toBeLessThanOrEqual(now - TIME_CONSTANTS['month']);
+        // Allow 1 second tolerance for race condition
+        expect(range.startTimeMs).toBeLessThanOrEqual(now - TIME_CONSTANTS['month'] + 1000);
     });
 
     it('should throw error for invalid dimension', () => {
