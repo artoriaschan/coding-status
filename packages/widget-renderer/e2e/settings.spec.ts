@@ -100,7 +100,7 @@ describe('loadSettings', () => {
     let settingsPath: string;
 
     beforeEach(async () => {
-        tempDir = await mkdtemp(join(tmpdir(), 'cdps-settings-test-'));
+        tempDir = await mkdtemp(join(tmpdir(), 'coding-status-settings-test-'));
         settingsPath = join(tempDir, 'settings.json');
     });
 
@@ -151,7 +151,7 @@ describe('saveSettings', () => {
     let settingsPath: string;
 
     beforeEach(async () => {
-        tempDir = await mkdtemp(join(tmpdir(), 'cdps-settings-test-'));
+        tempDir = await mkdtemp(join(tmpdir(), 'coding-status-settings-test-'));
         settingsPath = join(tempDir, 'settings.json');
     });
 

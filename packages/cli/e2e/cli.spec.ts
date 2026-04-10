@@ -2,7 +2,7 @@
  * CLI program tests
  *
  * Per D-10:
- * - CLI program creates Commander instance with name 'cdps'
+ * - CLI program creates Commander instance with name 'coding-status'
  * - Registers all 7 commands
  * - Parses args correctly
  * - Shows help with --help
@@ -11,6 +11,7 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
+// eslint-disable-next-line @softarc/sheriff/dependency-rule
 import { cli } from '../src/cli.js';
 
 // Mock all command registration functions
@@ -39,7 +40,7 @@ describe('cli', () => {
         mockConsole.mockRestore();
     });
 
-    it('should create Commander program with name cdps', async () => {
+    it('should create Commander program with name coding-status', async () => {
         // Import the mocked commands
         const commands = await import('../src/commands/index.js');
 

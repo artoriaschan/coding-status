@@ -140,7 +140,9 @@ describe('registerUse', () => {
 
         // Assert
         expect(chalk.red).toHaveBeenCalledWith('Error: Provider "non-existent" not found.');
-        expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('Run `cdps list`'));
+        expect(consoleSpy).toHaveBeenCalledWith(
+            expect.stringContaining('Run `coding-status list`')
+        );
         expect(saveConfig).not.toHaveBeenCalled();
 
         consoleSpy.mockRestore();

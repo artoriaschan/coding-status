@@ -36,14 +36,14 @@ export function registerRm(program: Command): void {
             const providerIndex = config.providers.findIndex(p => p.name === providerName);
             if (providerIndex === -1) {
                 console.log(chalk.red(`Error: Provider "${providerName}" not found.`));
-                console.log('Run `cdps list` to see available providers.');
+                console.log('Run `coding-status list` to see available providers.');
                 return;
             }
 
             // Check if provider is current (cannot delete active provider)
             if (config.current === providerName) {
                 console.log(chalk.red(`Error: Cannot delete current provider "${providerName}".`));
-                console.log('Run `cdps use <other-provider>` to switch first.');
+                console.log('Run `coding-status use <other-provider>` to switch first.');
                 return;
             }
 

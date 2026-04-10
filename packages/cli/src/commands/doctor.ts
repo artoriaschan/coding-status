@@ -60,7 +60,7 @@ export function registerDoctor(program: Command): void {
             // Check providers
             if (config.providers.length === 0) {
                 console.log(chalk.yellow('No providers configured.'));
-                console.log('Run `cdps add` to add a provider.');
+                console.log('Run `coding-status add` to add a provider.');
                 return;
             }
 

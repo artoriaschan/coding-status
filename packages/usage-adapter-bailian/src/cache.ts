@@ -10,7 +10,7 @@ import { readFile, writeFile, mkdir, unlink } from 'node:fs/promises';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 
-/** Cache directory: ~/.cdps/cache (D-05) */
+/** Cache directory: ~/.coding-status/cache (D-05) */
 export const CACHE_DIR = join(homedir(), '.coding-status', 'cache');
 
 /** Default TTL: 300 seconds (5 minutes) */

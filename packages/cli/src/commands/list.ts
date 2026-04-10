@@ -33,7 +33,7 @@ export function registerList(program: Command): void {
 
             if (config.providers.length === 0) {
                 console.log('No providers configured.');
-                console.log('Run `cdps add` to add a provider.');
+                console.log('Run `coding-status add` to add a provider.');
                 return;
             }
 

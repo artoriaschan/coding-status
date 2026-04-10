@@ -2,7 +2,7 @@
  * CLI program definition
  *
  * Per D-10:
- * - Define Commander program with name 'cdps'
+ * - Define Commander program with name 'coding-status'
  * - Register all commands from commands module
  * - Parse args with from: 'user' option
  */

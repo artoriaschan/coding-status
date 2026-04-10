@@ -7,7 +7,19 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
-import type { UsageAdapter, UsageDimension } from '@coding-status/widget-renderer';
+import type { UsageDimension } from '@coding-status/widget-renderer';
+
+vi.mock('@coding-status/mock-adapter', () => ({
+    default: {
+        name: 'mock-adapter',
+        displayName: 'Mock Adapter',
+        init: vi.fn().mockResolvedValue(undefined),
+        getDimensions: vi
+            .fn()
+            .mockResolvedValue([{ key: '5h', label: '5 Hours' }] as UsageDimension[]),
+        getUsage: vi.fn().mockResolvedValue(100),
+    },
+}));
 
 import { AdapterLoader } from '../../src/adapters/loader.js';
 import {
@@ -16,15 +28,6 @@ import {
     AdapterInitError,
     AdapterUsageError,
 } from '../../src/adapters/errors.js';
-
-// Mock adapter for testing
-const createMockAdapter = (): UsageAdapter => ({
-    name: 'mock-adapter',
-    displayName: 'Mock Adapter',
-    init: vi.fn().mockResolvedValue(undefined),
-    getDimensions: vi.fn().mockResolvedValue([{ key: '5h', label: '5 Hours' }] as UsageDimension[]),
-    getUsage: vi.fn().mockResolvedValue(100),
-});
 
 describe('AdapterLoader', () => {
     let loader: AdapterLoader;
@@ -55,14 +58,6 @@ describe('AdapterLoader', () => {
 
     describe('cache behavior', () => {
         it('getAdapter() caches adapter after first load', async () => {
-            const mockAdapter = createMockAdapter();
-
-            // Mock dynamic import
-            vi.mock('@coding-status/mock-adapter', () => ({
-                default: mockAdapter,
-            }));
-
-            // Dynamic mock import workaround: simulate by directly caching
             // Note: Real dynamic import tested in integration tests (Phase 5)
             loader.clearCache();
 
@@ -85,14 +80,20 @@ describe('AdapterLoader', () => {
 
     describe('error handling', () => {
         it('AdapterNotFoundError has packageName in message', () => {
-            const error = new AdapterNotFoundError('@coding-status/missing-adapter', 'Cannot find module');
+            const error = new AdapterNotFoundError(
+                '@coding-status/missing-adapter',
+                'Cannot find module'
+            );
             expect(error.packageName).toBe('@coding-status/missing-adapter');
             expect(error.message).toContain('@coding-status/missing-adapter');
             expect(error.message).toContain('not found');
         });
 
         it('AdapterLoadError has packageName and reason', () => {
-            const error = new AdapterLoadError('@coding-status/bad-adapter', 'Missing default export');
+            const error = new AdapterLoadError(
+                '@coding-status/bad-adapter',
+                'Missing default export'
+            );
             expect(error.packageName).toBe('@coding-status/bad-adapter');
             expect(error.message).toContain('Failed to load');
             expect(error.message).toContain('Missing default export');

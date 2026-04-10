@@ -69,7 +69,7 @@ describe('claude-settings', () => {
             // Should have only one statusLine entry (lowercase)
             expect(writtenSettings.statusLine).toEqual({
                 type: 'command',
-                command: 'cdps statusline',
+                command: 'coding-status statusline',
             });
 
             // Should NOT have any other case variants
@@ -103,7 +103,7 @@ describe('claude-settings', () => {
             expect(writtenSettings.customKey).toBe('customValue');
             expect(writtenSettings.statusLine).toEqual({
                 type: 'command',
-                command: 'cdps statusline',
+                command: 'coding-status statusline',
             });
         });
 

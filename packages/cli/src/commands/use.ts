@@ -33,7 +33,7 @@ export function registerUse(program: Command): void {
             const provider = config.providers.find(p => p.name === providerName);
             if (!provider) {
                 console.log(chalk.red(`Error: Provider "${providerName}" not found.`));
-                console.log('Run `cdps list` to see available providers.');
+                console.log('Run `coding-status list` to see available providers.');
                 return;
             }
 

@@ -122,7 +122,9 @@ describe('registerRm', () => {
 
         // Assert
         expect(chalk.red).toHaveBeenCalledWith('Error: Provider "non-existent" not found.');
-        expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('Run `cdps list`'));
+        expect(consoleSpy).toHaveBeenCalledWith(
+            expect.stringContaining('Run `coding-status list`')
+        );
         expect(saveConfig).not.toHaveBeenCalled();
 
         consoleSpy.mockRestore();
@@ -142,7 +144,7 @@ describe('registerRm', () => {
         expect(chalk.red).toHaveBeenCalledWith(
             'Error: Cannot delete current provider "provider-one".'
         );
-        expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('cdps use'));
+        expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('coding-status use'));
         expect(saveConfig).not.toHaveBeenCalled();
 
         consoleSpy.mockRestore();

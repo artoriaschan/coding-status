@@ -22,7 +22,7 @@ const DEFAULT_CONFIG: Config = {
 };
 
 /**
- * Load configuration from ~/.cdps/config.json
+ * Load configuration from ~/.coding-status/config.json
  *
  * Returns DEFAULT_CONFIG if the file doesn't exist or cannot be parsed.
  * Validates loaded config against ConfigSchema.
@@ -42,9 +42,9 @@ export async function loadConfig(): Promise<Config> {
 }
 
 /**
- * Save configuration to ~/.cdps/config.json
+ * Save configuration to ~/.coding-status/config.json
  *
- * Creates the ~/.cdps/ directory if it doesn't exist.
+ * Creates the ~/.coding-status/ directory if it doesn't exist.
  * Writes config as formatted JSON with 2-space indentation.
  * Sets file permissions to 600 (owner read/write only) for credential security.
  *
@@ -65,7 +65,7 @@ export async function saveConfig(config: Config): Promise<void> {
 /**
  * Get the config directory path
  *
- * Returns the ~/.cdps/ directory path for external use.
+ * Returns the ~/.coding-status/ directory path for external use.
  *
  * @returns Config directory path
  */

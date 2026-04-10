@@ -4,7 +4,7 @@
  * Provides safe, idempotent updates to Claude Code's settings.json
  * for statusline command registration.
  *
- * Per D-17: Command format is { type: "command", command: "cdps statusline" }
+ * Per D-17: Command format is { type: "command", command: "coding-status statusline" }
  * Per D-18: Safe idempotent update - removes all statusline variants (case-insensitive)
  */
 
@@ -20,7 +20,7 @@ export const CLAUDE_SETTINGS_PATH = join(homedir(), '.claude', 'settings.json');
 /**
  * The statusline command to register in Claude Code settings
  */
-const STATUSLINE_COMMAND = 'cdps statusline';
+const STATUSLINE_COMMAND = 'coding-status statusline';
 
 /**
  * Claude Code settings.json structure
@@ -35,7 +35,7 @@ interface ClaudeSettings {
  * Per D-18:
  * - Safe idempotent update
  * - Remove all statusline related configs (case-insensitive)
- * - Add new cdps config
+ * - Add new coding-status config
  *
  * @returns true if updated, false if settings.json doesn't exist
  * @throws Error if file read/write fails or JSON is malformed
