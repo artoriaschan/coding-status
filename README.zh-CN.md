@@ -1,12 +1,12 @@
-# cdps
+# coding-status
 
 <p align="center">
   <strong>Claude Code CLI 的云供应商用量状态栏工具</strong>
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/cdps">
-    <img src="https://badge.fury.io/js/cdps.svg" alt="npm version">
+  <a href="https://www.npmjs.com/package/coding-status">
+    <img src="https://badge.fury.io/js/coding-status.svg" alt="npm version">
   </a>
   <a href="https://opensource.org/licenses/MIT">
     <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT">
@@ -32,25 +32,25 @@
 ## 安装
 
 ```bash
-npm install -g cdps
+npm install -g coding-status
 ```
 
 需要 Node.js >= 20.12.0
 
 ## 快速开始
 
-### 1. 初始化 cdps
+### 1. 初始化 coding-status
 
 ```bash
-cdps init
+coding-status init
 ```
 
-这会创建 `~/.cdps/` 目录，并在可用时更新 Claude Code 设置。
+这会创建 `~/.coding-status/` 目录，并在可用时更新 Claude Code 设置。
 
 ### 2. 添加供应商
 
 ```bash
-cdps add
+coding-status add
 ```
 
 按提示配置阿里云百炼凭证：
@@ -64,22 +64,22 @@ cdps add
 
 ```json
 {
-  "statusline": "$(cdps statusline)"
+  "statusline": "$(coding-status statusline)"
 }
 ```
 
-或运行 `cdps init`，它会自动提供此选项。
+或运行 `coding-status init`，它会自动提供此选项。
 
 ### 4. 查看效果
 
 ```bash
-cdps statusline
+coding-status statusline
 # 输出: Bailian | 5h: 1,234 ▓▓▓░░░░░░░ 12%
 ```
 
 ## 配置
 
-### 供应商配置 (`~/.cdps/config.json`)
+### 供应商配置 (`~/.coding-status/config.json`)
 
 ```json
 {
@@ -101,7 +101,7 @@ cdps statusline
 
 **安全提示：** 此文件以 `chmod 600` 创建，限制访问权限。
 
-### 组件设置 (`~/.cdps/settings.json`)
+### 组件设置 (`~/.coding-status/settings.json`)
 
 ```json
 {
@@ -139,38 +139,38 @@ cdps statusline
 
 | 命令 | 描述 |
 |------|------|
-| `cdps init` | 初始化 cdps 配置 |
-| `cdps add` | 交互式添加新供应商 |
-| `cdps list` | 列出所有已配置供应商 |
-| `cdps use <name>` | 切换到其他供应商 |
-| `cdps rm <name>` | 删除供应商 |
-| `cdps doctor` | 检查配置健康状况 |
-| `cdps statusline` | 输出状态栏字符串 |
+| `coding-status init` | 初始化 coding-status 配置 |
+| `coding-status add` | 交互式添加新供应商 |
+| `coding-status list` | 列出所有已配置供应商 |
+| `coding-status use <name>` | 切换到其他供应商 |
+| `coding-status rm <name>` | 删除供应商 |
+| `coding-status doctor` | 检查配置健康状况 |
+| `coding-status statusline` | 输出状态栏字符串 |
 
 ## 故障排除
 
 ### 状态栏只显示供应商名称
 
-API 调用失败。运行 `cdps doctor` 检查：
+API 调用失败。运行 `coding-status doctor` 检查：
 - 凭证是否有效
 - 网络连接是否正常
 - 熔断器状态（3 次失败后触发）
 
 ### "No provider configured"
 
-先运行 `cdps add` 添加供应商。
+先运行 `coding-status add` 添加供应商。
 
 ### Claude Code 不显示状态栏
 
 1. 验证 settings.json 路径：`~/.claude/settings.json`
-2. 检查 `cdps` 是否在 PATH 中：`which cdps`
-3. 手动测试：`cdps statusline`
+2. 检查 `coding-status` 是否在 PATH 中：`which coding-status`
+3. 手动测试：`coding-status statusline`
 
 ### 缓存问题
 
 清除缓存：
 ```bash
-rm -rf ~/.cdps/cache/
+rm -rf ~/.coding-status/cache/
 ```
 
 ## 本地开发
@@ -213,8 +213,8 @@ npx tsx packages/core/src/index.ts statusline
 DEBUG=1 npx tsx packages/core/src/index.ts statusline
 
 # 查看配置
-cat ~/.cdps/config.json
-cat ~/.cdps/settings.json
+cat ~/.coding-status/config.json
+cat ~/.coding-status/settings.json
 ```
 
 ## 发布流程

@@ -1,8 +1,8 @@
-# coding-plans-statusline (cdps)
+# coding-plans-statusline (coding-status)
 
 ## Project
 
-cdps is a CLI tool that integrates with cloud provider usage APIs to display real-time usage information in Claude Code's statusline. Users configure different cloud providers through an adapter pattern. The first adapter supports Aliyun Bailian (querying CallCount metrics via CloudMonitor API).
+coding-status is a CLI tool that integrates with cloud provider usage APIs to display real-time usage information in Claude Code's statusline. Users configure different cloud providers through an adapter pattern. The first adapter supports Aliyun Bailian (querying CallCount metrics via CloudMonitor API).
 
 **Target users:** Developers who use Claude Code for development and cloud AI services like Aliyun Bailian.
 
@@ -15,7 +15,7 @@ cdps is a CLI tool that integrates with cloud provider usage APIs to display rea
 - **Monorepo:** pnpm workspaces, no npm/yarn workspaces
 - **Version:** Changesets fixed mode (all packages share unified version numbers)
 - **Dependencies:** @alicloud/cms20190101 SDK for Bailian API calls
-- **Security:** AccessKey/Secret stored in ~/.cdps/config.json (user local, not committed to git)
+- **Security:** AccessKey/Secret stored in ~/.coding-status/config.json (user local, not committed to git)
 
 ## Technology Stack
 
@@ -67,7 +67,7 @@ packages/
 ## Installation
 
 ```bash
-npm install -g cdps
+npm install -g coding-status
 ```
 
 Requires Node.js >= 18.0.0
@@ -75,35 +75,35 @@ Requires Node.js >= 18.0.0
 ## Quick Start
 
 ```bash
-# 1. Initialize cdps
-cdps init
+# 1. Initialize coding-status
+coding-status init
 
 # 2. Add a provider
-cdps add
+coding-status add
 
 # 3. Configure Claude Code statusline (auto-detected during init)
 # Or manually add to ~/.claude/settings.json:
-# { "statusline": "$(cdps statusline)" }
+# { "statusline": "$(coding-status statusline)" }
 
 # 4. Test statusline output
-cdps statusline
+coding-status statusline
 ```
 
 ## Commands
 
 | Command | Description |
 |---------|-------------|
-| `cdps init` | Initialize cdps configuration |
-| `cdps add` | Add a new provider interactively |
-| `cdps list` | List all configured providers |
-| `cdps use <name>` | Switch to a different provider |
-| `cdps rm <name>` | Remove a provider |
-| `cdps doctor` | Check configuration health |
-| `cdps statusline` | Output statusline string |
+| `coding-status init` | Initialize coding-status configuration |
+| `coding-status add` | Add a new provider interactively |
+| `coding-status list` | List all configured providers |
+| `coding-status use <name>` | Switch to a different provider |
+| `coding-status rm <name>` | Remove a provider |
+| `coding-status doctor` | Check configuration health |
+| `coding-status statusline` | Output statusline string |
 
 ## Configuration
 
-### Provider Config (~/.cdps/config.json)
+### Provider Config (~/.coding-status/config.json)
 
 ```json
 {
@@ -125,7 +125,7 @@ cdps statusline
 
 Security note: This file is created with `chmod 600` to restrict access.
 
-### Widget Settings (~/.cdps/settings.json)
+### Widget Settings (~/.coding-status/settings.json)
 
 ```json
 {
@@ -172,7 +172,7 @@ Security note: This file is created with `chmod 600` to restrict access.
 
 ### Widget Rendering Flow
 
-1. **Settings Loader** reads ~/.cdps/settings.json
+1. **Settings Loader** reads ~/.coding-status/settings.json
 2. **Widget Registry** maps widget types to implementations
 3. **Renderer Engine** composes widgets into statusline output
 4. **Color Utilities** apply thresholds and ANSI colors (respects NO_COLOR)

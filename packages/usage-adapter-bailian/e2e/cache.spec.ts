@@ -38,8 +38,8 @@ describe('cache', () => {
     });
 
     describe('CACHE_DIR', () => {
-        it('should point to ~/.cdps/cache directory', () => {
-            expect(CACHE_DIR).toBe(join(homedir(), '.cdps', 'cache'));
+        it('should point to ~/.coding-status/cache directory', () => {
+            expect(CACHE_DIR).toBe(join(homedir(), '.coding-status', 'cache'));
         });
     });
 
@@ -49,9 +49,9 @@ describe('cache', () => {
             expect(path).toBe(join(CACHE_DIR, 'provider-bailian.json'));
         });
 
-        it('should include .cdps/cache directory', () => {
+        it('should include .coding-status/cache directory', () => {
             const path = getCachePath('my-provider');
-            expect(path).toContain('.cdps');
+            expect(path).toContain('.coding-status');
             expect(path).toContain('cache');
         });
     });

@@ -59,25 +59,12 @@ importers:
 
   packages/cli:
     dependencies:
-      '@cdps/core':
-        specifier: workspace:*
-        version: link:../core
-    devDependencies:
-      tsup:
-        specifier: ^8.0.0
-        version: 8.5.1(postcss@8.5.8)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.3)
-      tsx:
-        specifier: ^4.0.0
-        version: 4.21.0
-
-  packages/core:
-    dependencies:
-      '@cdps/widget-renderer':
-        specifier: workspace:*
-        version: link:../widget-renderer
       '@clack/prompts':
         specifier: ^0.10.0
         version: 0.10.1
+      '@coding-status/widget-renderer':
+        specifier: workspace:*
+        version: link:../widget-renderer
       chalk:
         specifier: ^5.3.0
         version: 5.6.2
@@ -94,6 +81,9 @@ importers:
       '@types/node':
         specifier: ^20.11.0
         version: 20.19.39
+      tsup:
+        specifier: ^8.0.0
+        version: 8.5.1(postcss@8.5.8)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.3)
       tsx:
         specifier: ^4.21.0
         version: 4.21.0
@@ -112,10 +102,10 @@ importers:
       '@alicloud/openapi-core':
         specifier: ^1.0.0
         version: 1.0.7
-      '@cdps/core':
+      '@coding-status/cli':
         specifier: workspace:*
-        version: link:../core
-      '@cdps/widget-renderer':
+        version: link:../cli
+      '@coding-status/widget-renderer':
         specifier: workspace:*
         version: link:../widget-renderer
     devDependencies:

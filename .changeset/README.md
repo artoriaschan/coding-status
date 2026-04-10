@@ -8,4 +8,4 @@ Run `pnpm changeset` to add a new changeset.
 
 ## Fixed Mode
 
-All @cdps/* packages are linked and will be versioned together.
+All @coding-status/* packages are linked and will be versioned together.

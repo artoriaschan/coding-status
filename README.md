@@ -1,12 +1,12 @@
-# cdps
+# coding-status
 
 <p align="center">
   <strong>Cloud provider usage statusline for Claude Code CLI</strong>
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/cdps">
-    <img src="https://badge.fury.io/js/cdps.svg" alt="npm version">
+  <a href="https://www.npmjs.com/package/coding-status">
+    <img src="https://badge.fury.io/js/coding-status.svg" alt="npm version">
   </a>
   <a href="https://opensource.org/licenses/MIT">
     <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT">
@@ -32,25 +32,25 @@ Display real-time cloud AI service usage directly in your Claude Code statusline
 ## Installation
 
 ```bash
-npm install -g cdps
+npm install -g coding-status
 ```
 
 Requires Node.js >= 20.12.0
 
 ## Quick Start
 
-### 1. Initialize cdps
+### 1. Initialize coding-status
 
 ```bash
-cdps init
+coding-status init
 ```
 
-This creates the `~/.cdps/` directory and updates Claude Code settings if available.
+This creates the `~/.coding-status/` directory and updates Claude Code settings if available.
 
 ### 2. Add a provider
 
 ```bash
-cdps add
+coding-status add
 ```
 
 Follow the prompts to configure your Aliyun Bailian credentials:
@@ -64,22 +64,22 @@ Add to your Claude Code settings (usually at `~/.claude/settings.json`):
 
 ```json
 {
-  "statusline": "$(cdps statusline)"
+  "statusline": "$(coding-status statusline)"
 }
 ```
 
-Or run `cdps init` which will offer to do this automatically.
+Or run `coding-status init` which will offer to do this automatically.
 
 ### 4. See it in action
 
 ```bash
-cdps statusline
+coding-status statusline
 # Output: Bailian | 5h: 1,234 ▓▓▓░░░░░░░ 12%
 ```
 
 ## Configuration
 
-### Provider Config (`~/.cdps/config.json`)
+### Provider Config (`~/.coding-status/config.json`)
 
 ```json
 {
@@ -101,7 +101,7 @@ cdps statusline
 
 **Security note:** This file is created with `chmod 600` to restrict access.
 
-### Widget Settings (`~/.cdps/settings.json`)
+### Widget Settings (`~/.coding-status/settings.json`)
 
 ```json
 {
@@ -139,38 +139,38 @@ cdps statusline
 
 | Command | Description |
 |---------|-------------|
-| `cdps init` | Initialize cdps configuration |
-| `cdps add` | Add a new provider interactively |
-| `cdps list` | List all configured providers |
-| `cdps use <name>` | Switch to a different provider |
-| `cdps rm <name>` | Remove a provider |
-| `cdps doctor` | Check configuration health |
-| `cdps statusline` | Output statusline string |
+| `coding-status init` | Initialize coding-status configuration |
+| `coding-status add` | Add a new provider interactively |
+| `coding-status list` | List all configured providers |
+| `coding-status use <name>` | Switch to a different provider |
+| `coding-status rm <name>` | Remove a provider |
+| `coding-status doctor` | Check configuration health |
+| `coding-status statusline` | Output statusline string |
 
 ## Troubleshooting
 
 ### Statusline shows only provider name
 
-API call failed. Run `cdps doctor` to check:
+API call failed. Run `coding-status doctor` to check:
 - Credentials are valid
 - Network connectivity
 - Circuit breaker state (after 3 failures)
 
 ### "No provider configured"
 
-Run `cdps add` to add a provider first.
+Run `coding-status add` to add a provider first.
 
 ### Claude Code not showing statusline
 
 1. Verify settings.json path: `~/.claude/settings.json`
-2. Check that `cdps` is in your PATH: `which cdps`
-3. Test manually: `cdps statusline`
+2. Check that `coding-status` is in your PATH: `which coding-status`
+3. Test manually: `coding-status statusline`
 
 ### Cache issues
 
 Clear the cache:
 ```bash
-rm -rf ~/.cdps/cache/
+rm -rf ~/.coding-status/cache/
 ```
 
 ## Development
@@ -213,8 +213,8 @@ npx tsx packages/core/src/index.ts statusline
 DEBUG=1 npx tsx packages/core/src/index.ts statusline
 
 # Check configuration
-cat ~/.cdps/config.json
-cat ~/.cdps/settings.json
+cat ~/.coding-status/config.json
+cat ~/.coding-status/settings.json
 ```
 
 ## Publishing Workflow

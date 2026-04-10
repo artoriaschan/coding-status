@@ -7,8 +7,8 @@
  * Per D-11~13: credential validation, error message format.
  */
 
-import type { UsageAdapter, UsageDimension } from '@cdps/widget-renderer';
-import { AdapterInitError } from '@cdps/core';
+import type { UsageAdapter, UsageDimension } from '@coding-status/widget-renderer';
+import { AdapterInitError } from '@coding-status/cli';
 import { createClient, fetchCallCount, withTimeout, API_TIMEOUT } from './client.js';
 import { DIMENSIONS, getTimeRange, isValidDimension } from './dimensions.js';
 import { loadCache, saveCache } from './cache.js';
@@ -77,14 +77,14 @@ export const BailianAdapter: UsageAdapter = {
 
         if (!accessKeyId || accessKeyId.trim() === '') {
             throw new AdapterInitError(
-                '@cdps/usage-adapter-bailian',
+                '@coding-status/usage-adapter-bailian',
                 'Missing accessKeyId in credentials'
             );
         }
 
         if (!accessKeySecret || accessKeySecret.trim() === '') {
             throw new AdapterInitError(
-                '@cdps/usage-adapter-bailian',
+                '@coding-status/usage-adapter-bailian',
                 'Missing accessKeySecret in credentials'
             );
         }
@@ -95,7 +95,7 @@ export const BailianAdapter: UsageAdapter = {
         } catch (error) {
             const reason = error instanceof Error ? error.message : 'Client creation failed';
             throw new AdapterInitError(
-                '@cdps/usage-adapter-bailian',
+                '@coding-status/usage-adapter-bailian',
                 `Failed to create SDK client: ${reason}`
             );
         }
@@ -113,7 +113,7 @@ export const BailianAdapter: UsageAdapter = {
         } catch (error) {
             const reason = error instanceof Error ? error.message : 'API validation failed';
             throw new AdapterInitError(
-                '@cdps/usage-adapter-bailian',
+                '@coding-status/usage-adapter-bailian',
                 `Credential validation failed: ${reason}`
             );
         }

@@ -5,7 +5,7 @@
  * for 5h, week, and month usage metrics.
  */
 
-import type { UsageDimension } from '@cdps/widget-renderer';
+import type { UsageDimension } from '@coding-status/widget-renderer';
 
 // =============================================================================
 // Time Constants (per D-04)

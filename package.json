@@ -1,7 +1,7 @@
 {
-    "name": "cdps-monorepo",
+    "name": "coding-status-monorepo",
     "version": "0.0.1",
-    "description": "CDPS - Cloud provider usage statusline for Claude Code",
+    "description": "Coding Status - Cloud provider usage statusline for Claude Code",
     "private": true,
     "type": "module",
     "packageManager": "pnpm@10.33.0",

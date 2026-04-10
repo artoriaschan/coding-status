@@ -2,7 +2,7 @@
  * File cache module for Bailian usage data
  *
  * Implements file-based cache with configurable TTL.
- * Cache location: ~/.cdps/cache/provider-{name}.json
+ * Cache location: ~/.coding-status/cache/provider-{name}.json
  * Per D-05~07: cache location, key format, and TTL management.
  */
 
@@ -11,7 +11,7 @@ import { homedir } from 'node:os';
 import { join } from 'node:path';
 
 /** Cache directory: ~/.cdps/cache (D-05) */
-export const CACHE_DIR = join(homedir(), '.cdps', 'cache');
+export const CACHE_DIR = join(homedir(), '.coding-status', 'cache');
 
 /** Default TTL: 300 seconds (5 minutes) */
 const DEFAULT_TTL = 300;
@@ -34,7 +34,7 @@ export interface CacheEntry {
 /**
  * Get cache file path for a provider
  *
- * Format: ~/.cdps/cache/provider-{name}.json (D-06)
+ * Format: ~/.coding-status/cache/provider-{name}.json (D-06)
  *
  * @param providerName - Provider name
  * @returns Full path to cache file

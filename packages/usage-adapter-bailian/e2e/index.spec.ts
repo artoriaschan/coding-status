@@ -7,7 +7,7 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
-import type { UsageAdapter, UsageDimension } from '@cdps/widget-renderer';
+import type { UsageAdapter, UsageDimension } from '@coding-status/widget-renderer';
 
 import BailianAdapter from '../src/index.js';
 
@@ -44,7 +44,7 @@ vi.mock('../src/circuit-breaker.js', () => ({
     getCircuitBreaker: vi.fn(),
 }));
 
-vi.mock('@cdps/core', () => ({
+vi.mock('@coding-status/cli', () => ({
     AdapterInitError: class AdapterInitError extends Error {
         constructor(
             public readonly packageName: string,
@@ -91,7 +91,7 @@ describe('BailianAdapter', () => {
 
     // Test 5: init throws AdapterInitError for invalid credentials
     it('should throw AdapterInitError for invalid credentials', async () => {
-        const { AdapterInitError } = await import('@cdps/core');
+        const { AdapterInitError } = await import('@coding-status/cli');
         const credentials = { accessKeyId: '', accessKeySecret: 'secret' };
         await expect(BailianAdapter.init(credentials)).rejects.toThrow(AdapterInitError);
     });

@@ -12,7 +12,7 @@ import { join } from 'node:path';
 import { homedir } from 'node:os';
 
 /** Path to circuit breaker state file */
-export const CIRCUIT_BREAKER_PATH = join(homedir(), '.cdps', 'circuit-breaker.json');
+export const CIRCUIT_BREAKER_PATH = join(homedir(), '.coding-status', 'circuit-breaker.json');
 
 /** Number of consecutive failures before circuit opens */
 export const FAILURE_THRESHOLD = 3;
@@ -81,7 +81,7 @@ export class CircuitBreaker {
      */
     private saveState(): void {
         try {
-            const dir = join(homedir(), '.cdps');
+            const dir = join(homedir(), '.coding-status');
             if (!existsSync(dir)) {
                 mkdirSync(dir, { recursive: true });
             }

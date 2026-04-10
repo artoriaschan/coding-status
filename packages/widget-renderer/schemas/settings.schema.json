@@ -1,8 +1,8 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://cdps.dev/schemas/settings.schema.json",
-  "title": "CDPS Settings",
-  "description": "Widget layout settings for cdps statusline",
+  "$id": "https://coding-status.dev/schemas/settings.schema.json",
+  "title": "Coding Status Settings",
+  "description": "Widget layout settings for coding-status statusline",
   "$ref": "#/definitions/CDPSSettings",
   "definitions": {
     "CDPSSettings": {

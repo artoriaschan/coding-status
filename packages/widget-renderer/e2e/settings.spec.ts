@@ -2,7 +2,7 @@
  * Settings loader tests
  *
  * Tests for loadSettings, saveSettings, and DEFAULT_SETTINGS.
- * Uses temporary directories to avoid polluting user's ~/.cdps/
+ * Uses temporary directories to avoid polluting user's ~/.coding-status/
  */
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';

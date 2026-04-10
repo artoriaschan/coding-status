@@ -1,7 +1,7 @@
 /**
  * Settings loader for widget layout configuration
  *
- * Loads and saves widget layout settings from ~/.cdps/settings.json
+ * Loads and saves widget layout settings from ~/.coding-status/settings.json
  * with sensible defaults for first-time users.
  */
 
@@ -14,7 +14,7 @@ import type { Settings, WidgetConfig } from './types.js';
 /**
  * Path to the settings file in user's home directory
  */
-export const SETTINGS_PATH = join(homedir(), '.cdps', 'settings.json');
+export const SETTINGS_PATH = join(homedir(), '.coding-status', 'settings.json');
 
 /**
  * Default settings for widget layout
@@ -39,7 +39,7 @@ export const DEFAULT_SETTINGS: Settings = {
 };
 
 /**
- * Load settings from ~/.cdps/settings.json
+ * Load settings from ~/.coding-status/settings.json
  *
  * Returns DEFAULT_SETTINGS if the file doesn't exist or cannot be parsed.
  * This ensures the application always has valid settings to work with.
@@ -58,16 +58,16 @@ export async function loadSettings(): Promise<Settings> {
 }
 
 /**
- * Save settings to ~/.cdps/settings.json
+ * Save settings to ~/.coding-status/settings.json
  *
- * Creates the ~/.cdps/ directory if it doesn't exist.
+ * Creates the ~/.coding-status/ directory if it doesn't exist.
  * Writes settings as formatted JSON with 2-space indentation.
  *
  * @param settings - Settings object to save
  * @returns Promise that resolves when write is complete
  */
 export async function saveSettings(settings: Settings): Promise<void> {
-    const dir = join(homedir(), '.cdps');
+    const dir = join(homedir(), '.coding-status');
     await mkdir(dir, { recursive: true });
     await writeFile(SETTINGS_PATH, JSON.stringify(settings, null, 2), 'utf-8');
 }
