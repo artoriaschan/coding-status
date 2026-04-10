@@ -6,7 +6,7 @@ import { describe, it, expect } from 'vitest';
 
 import type { RenderContext, WidgetConfig } from '../../src/types.js';
 
-import { TextWidget, TextSchema } from '../../src/../src/widgets/text.widget.js';
+import { TextWidget, TextSchema } from '../../src/widgets/text.widget.js';
 
 // Mock context
 const mockCtx: RenderContext = {

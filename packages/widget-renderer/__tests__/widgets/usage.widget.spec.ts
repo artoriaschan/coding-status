@@ -6,7 +6,7 @@ import { describe, it, expect } from 'vitest';
 
 import type { RenderContext, WidgetConfig, UsageBarColors } from '../../src/types.js';
 
-import { UsageWidget, UsageSchema } from '../../src/../src/widgets/usage.widget.js';
+import { UsageWidget, UsageSchema } from '../../src/widgets/usage.widget.js';
 
 describe('UsageWidget', () => {
     describe('render', () => {

@@ -6,7 +6,7 @@ import { describe, it, expect } from 'vitest';
 
 import type { RenderContext, WidgetConfig } from '../../src/types.js';
 
-import { SeparatorWidget, SeparatorSchema } from '../../src/../src/widgets/separator.widget.js';
+import { SeparatorWidget, SeparatorSchema } from '../../src/widgets/separator.widget.js';
 
 // Mock context
 const mockCtx: RenderContext = {

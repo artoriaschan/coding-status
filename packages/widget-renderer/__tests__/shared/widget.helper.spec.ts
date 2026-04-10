@@ -8,7 +8,7 @@
 import { describe, expect, it } from 'vitest';
 
 import type { WidgetConfig, NaVisibility } from '../../src/types.js';
-import { getOption, renderWidgetWithLabel } from '../../src/../src/shared/widget.helper.js';
+import { getOption, renderWidgetWithLabel } from '../../src/shared/widget.helper.js';
 
 /**
  * Helper to strip ANSI codes from strings for comparison

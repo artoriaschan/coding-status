@@ -38,15 +38,15 @@ export const sheriffConfig: SheriffConfig = {
         // Feature layer - adapters (can import domain + core:widgets)
         'packages/usage-adapter-bailian/src': 'feature:adapter',
 
-        // Test directories - all files in e2e tagged as test
-        'packages/cli/e2e': 'test:cli',
-        'packages/cli/e2e/adapters': 'test:cli',
-        'packages/cli/e2e/commands': 'test:cli',
-        'packages/cli/e2e/config': 'test:cli',
-        'packages/cli/e2e/utils': 'test:cli',
-        'packages/cli/e2e/scripts': 'test:cli',
-        'packages/widget-renderer/e2e': 'test:widgets',
-        'packages/usage-adapter-bailian/e2e': 'test:bailian',
+        // Test directories - all files in __tests__ tagged as test
+        'packages/cli/__tests__': 'test:cli',
+        'packages/cli/__tests__/adapters': 'test:cli',
+        'packages/cli/__tests__/commands': 'test:cli',
+        'packages/cli/__tests__/config': 'test:cli',
+        'packages/cli/__tests__/utils': 'test:cli',
+        'packages/cli/__tests__/scripts': 'test:cli',
+        'packages/widget-renderer/__tests__': 'test:widgets',
+        'packages/usage-adapter-bailian/__tests__': 'test:bailian',
     },
     depRules: {
         // Domain layer: types can only import external packages

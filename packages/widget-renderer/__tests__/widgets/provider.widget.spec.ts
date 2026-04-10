@@ -6,7 +6,7 @@ import { describe, it, expect } from 'vitest';
 
 import type { RenderContext, WidgetConfig } from '../../src/types.js';
 
-import { ProviderWidget, ProviderSchema } from '../../src/../src/widgets/provider.widget.js';
+import { ProviderWidget, ProviderSchema } from '../../src/widgets/provider.widget.js';
 
 describe('ProviderWidget', () => {
     describe('render', () => {
