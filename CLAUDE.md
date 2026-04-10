@@ -44,7 +44,6 @@ coding-status is a CLI tool that integrates with cloud provider usage APIs to di
 | Library | Version | Purpose |
 |---------|---------|---------|
 | @clack/prompts | 0.10.x | Interactive Prompts - Modern, beautiful, minimal |
-| execa | 9.x | Process Execution - Shelling out to modify Claude Code settings.json |
 
 ### Development Tools
 
@@ -60,7 +59,7 @@ coding-status is a CLI tool that integrates with cloud provider usage APIs to di
 ```
 packages/
   widget-renderer/       # Base layer - types, colors, widgets
-  core/                  # CLI framework - commands, config, adapter loader
+  cli/                   # CLI framework + commands + bin entry (@coding-status/cli)
   usage-adapter-bailian/ # Aliyun Bailian provider adapter
 ```
 
