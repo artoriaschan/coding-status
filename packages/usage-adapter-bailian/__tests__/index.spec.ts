@@ -14,7 +14,6 @@ import BailianAdapter from '../src/index.js';
 // Mock all dependencies
 vi.mock('../src/client.js', () => ({
     fetchQuotaInfo: vi.fn(),
-    parseQuotaInfo: vi.fn(),
 }));
 
 vi.mock('../src/dimensions.js', () => ({

@@ -52,13 +52,14 @@ export interface CodingPlanQuotaInfo {
  * Extract a cookie value from a cookie string
  */
 function extractCookieValue(cookieString: string, key: string): string {
-    return (
-        cookieString
-            .split(';')
-            .map(c => c.trim())
-            .find(c => c.startsWith(`${key}=`))
-            ?.split('=')[1] ?? ''
-    );
+    const found = cookieString
+        .split(';')
+        .map(c => c.trim())
+        .find(c => c.startsWith(`${key}=`));
+    if (!found) return '';
+    // Preserve '=' in value by splitting with limit
+    const idx = found.indexOf('=');
+    return idx >= 0 ? found.slice(idx + 1) : '';
 }
 
 /**
@@ -162,6 +163,18 @@ export function parseQuotaInfo(data: unknown): CodingPlanQuotaInfo {
 
     if (!quotaInfo) {
         throw new Error('codingPlanQuotaInfo not found in response');
+    }
+
+    // Validate required numeric fields
+    const requiredFields: (keyof CodingPlanQuotaInfo)[] = [
+        'per5HourUsedQuota', 'per5HourTotalQuota',
+        'perWeekUsedQuota', 'perWeekTotalQuota',
+        'perBillMonthUsedQuota', 'perBillMonthTotalQuota',
+    ];
+    for (const field of requiredFields) {
+        if (typeof quotaInfo[field] !== 'number') {
+            throw new Error(`Invalid or missing quota field: ${String(field)}`);
+        }
     }
 
     return quotaInfo;

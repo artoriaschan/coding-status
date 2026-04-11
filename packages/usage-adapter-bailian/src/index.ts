@@ -61,7 +61,7 @@ export const BailianAdapter: UsageAdapter = {
      * Initialize adapter with credentials
      *
      * Validates credential structure and verifies API connectivity.
-     * Per D-11: calls DescribeMetricList to validate credentials (query last 1 hour).
+     * Per D-11: calls queryCodingPlanInstanceInfoV2 to validate credentials.
      * Per D-13: throws AdapterInitError with structured message on failure.
      *
      * @param credentials - Provider credentials (cookie, sec_token, region)
