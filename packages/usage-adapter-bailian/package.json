@@ -4,18 +4,19 @@
     "description": "Aliyun Bailian usage adapter for Coding Status",
     "type": "module",
     "main": "./dist/index.js",
-    "types": "./dist/index.d.ts",
+    "types": "./types/index.d.ts",
     "exports": {
         ".": {
-            "import": "./dist/index.js",
-            "types": "./dist/index.d.ts"
+            "types": "./types/index.d.ts",
+            "import": "./dist/index.js"
         }
     },
     "files": [
-        "dist"
+        "dist",
+        "types"
     ],
     "scripts": {
-        "build": "tsc",
+        "build": "tsup && tsc -p tsconfig.build.json",
         "prepublishOnly": "pnpm build"
     },
     "dependencies": {

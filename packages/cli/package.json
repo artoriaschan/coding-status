@@ -7,11 +7,18 @@
         "coding-status": "./dist/index.js"
     },
     "main": "./dist/index.js",
-    "types": "./dist/index.d.ts",
+    "types": "./types/index.d.ts",
     "files": [
         "dist",
+        "types",
         "schemas"
     ],
+    "exports": {
+        ".": {
+            "types": "./types/index.d.ts",
+            "import": "./dist/index.js"
+        }
+    },
     "contributes": {
         "jsonValidation": [
             {
@@ -24,7 +31,7 @@
         ]
     },
     "scripts": {
-        "build": "pnpm generate-schemas && tsup src/index.ts --format esm --dts --clean",
+        "build": "pnpm generate-schemas && tsup && tsc -p tsconfig.build.json",
         "generate-schemas": "tsx scripts/generate-schemas.ts",
         "dev": "tsx src/index.ts",
         "prepublishOnly": "pnpm build"
