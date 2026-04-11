@@ -6,3 +6,15 @@
  */
 
 // Barrel exports populated by Plan 02
+
+// Client
+export { HttpClient } from './client.js';
+
+// Errors
+export { HttpError, HttpTimeoutError, HttpNetworkError } from './errors.js';
+
+// Retry
+export { calculateBackoff } from './retry.js';
+
+// Types (re-export for consumer convenience)
+export type { AuthOptions, HttpRequestOptions, HttpResponse } from './types.js';
