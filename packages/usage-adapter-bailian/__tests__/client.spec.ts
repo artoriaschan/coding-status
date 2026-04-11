@@ -1,241 +1,297 @@
 /**
- * Tests for Aliyun CMS SDK client
+ * Tests for Bailian console API client
  *
- * Tests SDK client creation, API call, and timeout protection.
- * Uses vi.mock for SDK client mocking.
+ * Tests buildRequestBody, parseQuotaInfo, and fetchQuotaInfo.
+ * Mocks HttpClient to verify request construction.
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 import {
-    createClient,
-    fetchCallCount,
-    withTimeout,
-    API_TIMEOUT,
-    ENDPOINT,
-    NAMESPACE,
-    METRIC_NAME,
-    PERIOD,
-    type CmsClient,
+    BAILIAN_API_URL,
+    buildRequestBody,
+    parseQuotaInfo,
+    fetchQuotaInfo,
 } from '../src/client.js';
 
-// Mock @alicloud/cms20190101 SDK
-vi.mock('@alicloud/cms20190101', () => {
-    class MockCmsClient {
-        describeMetricListWithOptions = vi.fn();
-    }
+// Mock HttpClient
+const mockRequest = vi.fn();
 
-    return {
-        default: MockCmsClient,
-    };
+vi.mock('@coding-status/http-client', () => ({
+    HttpClient: class MockHttpClient {
+        request = mockRequest;
+    },
+}));
+
+// Re-import after mocking
+import { HttpClient } from '@coding-status/http-client';
+
+describe('BAILIAN_API_URL', () => {
+    it('contains bailian-cs.console.aliyun.com endpoint', () => {
+        expect(BAILIAN_API_URL).toContain('bailian-cs.console.aliyun.com/data/api.json');
+        expect(BAILIAN_API_URL).toContain('queryCodingPlanInstanceInfoV2');
+    });
 });
 
-// Mock @alicloud/openapi-core
-vi.mock('@alicloud/openapi-core', () => {
-    class MockConfig {
-        accessKeyId: string;
-        accessKeySecret: string;
-        endpoint: string;
+describe('buildRequestBody', () => {
+    const mockCredentials = {
+        cookie: 'cna=abc123; aliyun_lang=zh; other=value',
+        sec_token: 'token-xyz',
+        region: 'cn-hangzhou',
+    };
 
-        constructor(params: { accessKeyId?: string; accessKeySecret?: string }) {
-            this.accessKeyId = params.accessKeyId || '';
-            this.accessKeySecret = params.accessKeySecret || '';
-            this.endpoint = '';
-        }
-    }
+    it('produces form-urlencoded body with params, region, sec_token', () => {
+        const body = buildRequestBody(mockCredentials);
 
-    return {
-        $OpenApiUtil: {
-            Config: MockConfig,
+        expect(body).toContain('params=');
+        expect(body).toContain('&region=');
+        expect(body).toContain('&sec_token=');
+    });
+
+    it('URL-encodes the params JSON', () => {
+        const body = buildRequestBody(mockCredentials);
+
+        // params value should be URL-encoded
+        const paramsMatch = body.match(/params=([^&]+)/);
+        expect(paramsMatch).not.toBeNull();
+        const decoded = decodeURIComponent(paramsMatch![1]);
+        const params = JSON.parse(decoded) as Record<string, string>;
+
+        expect(params.Api).toBe('queryCodingPlanInstanceInfoV2');
+        expect(params.V).toBe('1.0');
+        expect(params.region).toBe('cn-hangzhou');
+    });
+
+    it('extracts cna cookie for X-Anonymous-Id in cornerstoneParam', () => {
+        const body = buildRequestBody(mockCredentials);
+        const paramsMatch = body.match(/params=([^&]+)/);
+        const decoded = decodeURIComponent(paramsMatch![1]);
+        const params = JSON.parse(decoded) as Record<string, string>;
+        const cornerstone = JSON.parse(params.cornerstoneParam) as Record<string, string>;
+
+        expect(cornerstone['X-Anonymous-Id']).toBe('abc123');
+    });
+
+    it('maps zh aliyun_lang to zh-CN in cornerstoneParam', () => {
+        const body = buildRequestBody({
+            ...mockCredentials,
+            cookie: 'cna=test; aliyun_lang=zh',
+        });
+        const paramsMatch = body.match(/params=([^&]+)/);
+        const decoded = decodeURIComponent(paramsMatch![1]);
+        const params = JSON.parse(decoded) as Record<string, string>;
+        const cornerstone = JSON.parse(params.cornerstoneParam) as Record<string, string>;
+
+        expect(cornerstone.xsp_lang).toBe('zh-CN');
+    });
+
+    it('defaults xsp_lang to en-US when aliyun_lang is missing', () => {
+        const body = buildRequestBody({
+            ...mockCredentials,
+            cookie: 'cna=test; other=val',
+        });
+        const paramsMatch = body.match(/params=([^&]+)/);
+        const decoded = decodeURIComponent(paramsMatch![1]);
+        const params = JSON.parse(decoded) as Record<string, string>;
+        const cornerstone = JSON.parse(params.cornerstoneParam) as Record<string, string>;
+
+        expect(cornerstone.xsp_lang).toBe('en-US');
+    });
+
+    it('includes feURL with region interpolated', () => {
+        const body = buildRequestBody(mockCredentials);
+        const paramsMatch = body.match(/params=([^&]+)/);
+        const decoded = decodeURIComponent(paramsMatch![1]);
+        const params = JSON.parse(decoded) as Record<string, string>;
+
+        expect(params.feURL).toContain('cn-hangzhou');
+    });
+
+    it('includes correct magic numbers', () => {
+        const body = buildRequestBody(mockCredentials);
+        const paramsMatch = body.match(/params=([^&]+)/);
+        const decoded = decodeURIComponent(paramsMatch![1]);
+        const params = JSON.parse(decoded) as Record<string, string>;
+
+        expect(params.commodityCode).toBe('sfm_codingplan_public_cn');
+        expect(params.switchAgent).toBe('14705871');
+        expect(params.switchUserType).toBe('3');
+    });
+
+    it('URL-encodes sec_token special characters', () => {
+        const body = buildRequestBody({
+            ...mockCredentials,
+            sec_token: 'token with special chars & = +',
+        });
+
+        expect(body).not.toContain('sec_token=token with special chars');
+        expect(body).toContain('sec_token=');
+    });
+});
+
+describe('parseQuotaInfo', () => {
+    const validResponse = {
+        code: '200',
+        data: {
+            success: true,
+            DataV2: {
+                data: {
+                    data: {
+                        codingPlanInstanceInfos: [
+                            {
+                                codingPlanQuotaInfo: {
+                                    per5HourUsedQuota: 100,
+                                    per5HourTotalQuota: 500,
+                                    perWeekUsedQuota: 800,
+                                    perWeekTotalQuota: 3500,
+                                    perBillMonthUsedQuota: 2000,
+                                    perBillMonthTotalQuota: 15000,
+                                },
+                            },
+                        ],
+                    },
+                },
+            },
         },
     };
-});
 
-describe('createClient', () => {
-    beforeEach(() => {
-        vi.clearAllMocks();
+    it('parses valid response to CodingPlanQuotaInfo', () => {
+        const result = parseQuotaInfo(validResponse);
+
+        expect(result.per5HourUsedQuota).toBe(100);
+        expect(result.per5HourTotalQuota).toBe(500);
+        expect(result.perWeekUsedQuota).toBe(800);
+        expect(result.perWeekTotalQuota).toBe(3500);
+        expect(result.perBillMonthUsedQuota).toBe(2000);
+        expect(result.perBillMonthTotalQuota).toBe(15000);
     });
 
-    afterEach(() => {
-        vi.clearAllMocks();
+    it('throws when code is not 200', () => {
+        const response = { code: '400', data: {} };
+        expect(() => parseQuotaInfo(response)).toThrow('API returned code 400');
     });
 
-    it('should create client with valid credentials', async () => {
-        const credentials = {
-            accessKeyId: 'test-key-id',
-            accessKeySecret: 'test-key-secret',
+    it('throws when data.success is false', () => {
+        const response = { code: '200', data: { success: false } };
+        expect(() => parseQuotaInfo(response)).toThrow('success: false');
+    });
+
+    it('throws when codingPlanInstanceInfos is empty', () => {
+        const response = {
+            code: '200',
+            data: {
+                success: true,
+                DataV2: {
+                    data: {
+                        data: {
+                            codingPlanInstanceInfos: [] as Array<Record<string, unknown>>,
+                        },
+                    },
+                },
+            },
         };
-
-        const client = await createClient(credentials);
-
-        expect(client).toBeDefined();
-        expect(client.describeMetricListWithOptions).toBeDefined();
+        expect(() => parseQuotaInfo(response)).toThrow('cookie may have expired');
     });
 
-    it('should set correct endpoint', async () => {
-        const credentials = {
-            accessKeyId: 'test-key-id',
-            accessKeySecret: 'test-key-secret',
+    it('throws when codingPlanQuotaInfo is missing', () => {
+        const response = {
+            code: '200',
+            data: {
+                success: true,
+                DataV2: {
+                    data: {
+                        data: {
+                            codingPlanInstanceInfos: [{}],
+                        },
+                    },
+                },
+            },
         };
-
-        await createClient(credentials);
-
-        // Endpoint constant should be cms.cn-hangzhou.aliyuncs.com
-        expect(ENDPOINT).toBe('cms.cn-hangzhou.aliyuncs.com');
-    });
-});
-
-describe('fetchCallCount', () => {
-    let mockClient: CmsClient;
-
-    beforeEach(() => {
-        vi.clearAllMocks();
-
-        // Create mock client with describeMetricListWithOptions method
-        mockClient = {
-            describeMetricListWithOptions: vi.fn(),
-        };
-    });
-
-    afterEach(() => {
-        vi.clearAllMocks();
-    });
-
-    it('should parse datapoints and return sum', async () => {
-        const mockDatapoints = [
-            { timestamp: 1712345678000, value: 100 },
-            { timestamp: 1712345978000, value: 200 },
-            { timestamp: 1712346278000, value: 150 },
-        ];
-
-        vi.mocked(mockClient.describeMetricListWithOptions).mockResolvedValue({
-            body: {
-                datapoints: JSON.stringify(mockDatapoints),
-            },
-        });
-
-        const startTimeMs = Date.now() - 3600000; // 1 hour ago
-        const endTimeMs = Date.now();
-
-        const result = await fetchCallCount(mockClient, startTimeMs, endTimeMs);
-
-        expect(result).toBe(450); // 100 + 200 + 150
-    });
-
-    it('should return 0 for empty datapoints', async () => {
-        vi.mocked(mockClient.describeMetricListWithOptions).mockResolvedValue({
-            body: {
-                datapoints: JSON.stringify([]),
-            },
-        });
-
-        const startTimeMs = Date.now() - 3600000;
-        const endTimeMs = Date.now();
-
-        const result = await fetchCallCount(mockClient, startTimeMs, endTimeMs);
-
-        expect(result).toBe(0);
-    });
-
-    it('should handle single datapoint', async () => {
-        const mockDatapoints = [{ timestamp: 1712345678000, value: 500 }];
-
-        vi.mocked(mockClient.describeMetricListWithOptions).mockResolvedValue({
-            body: {
-                datapoints: JSON.stringify(mockDatapoints),
-            },
-        });
-
-        const startTimeMs = Date.now() - 3600000;
-        const endTimeMs = Date.now();
-
-        const result = await fetchCallCount(mockClient, startTimeMs, endTimeMs);
-
-        expect(result).toBe(500);
-    });
-
-    it('should call API with correct parameters', async () => {
-        vi.mocked(mockClient.describeMetricListWithOptions).mockResolvedValue({
-            body: {
-                datapoints: JSON.stringify([{ timestamp: 1712345678000, value: 100 }]),
-            },
-        });
-
-        const startTimeMs = 1712300000000;
-        const endTimeMs = 1712340000000;
-
-        await fetchCallCount(mockClient, startTimeMs, endTimeMs);
-
-        // Verify the request was called with correct parameters
-        expect(mockClient.describeMetricListWithOptions).toHaveBeenCalled();
-        const requestArg = vi.mocked(mockClient.describeMetricListWithOptions).mock
-            .calls[0][0] as Record<string, unknown>;
-
-        expect(requestArg.namespace).toBe(NAMESPACE);
-        expect(requestArg.metricName).toBe(METRIC_NAME);
-        expect(requestArg.period).toBe(PERIOD);
-        // StartTime and EndTime should be ISO strings
-        expect(requestArg.startTime).toBeDefined();
-        expect(requestArg.endTime).toBeDefined();
+        expect(() => parseQuotaInfo(response)).toThrow('codingPlanQuotaInfo not found');
     });
 });
 
-describe('withTimeout', () => {
+describe('fetchQuotaInfo', () => {
+    const mockCredentials = {
+        cookie: 'cna=abc123; aliyun_lang=zh',
+        sec_token: 'token-xyz',
+        region: 'cn-hangzhou',
+    };
+
+    const mockQuotaResponse = {
+        code: '200',
+        data: {
+            success: true,
+            DataV2: {
+                data: {
+                    data: {
+                        codingPlanInstanceInfos: [
+                            {
+                                codingPlanQuotaInfo: {
+                                    per5HourUsedQuota: 50,
+                                    per5HourTotalQuota: 500,
+                                    perWeekUsedQuota: 400,
+                                    perWeekTotalQuota: 3500,
+                                    perBillMonthUsedQuota: 1500,
+                                    perBillMonthTotalQuota: 15000,
+                                },
+                            },
+                        ],
+                    },
+                },
+            },
+        },
+    };
+
     beforeEach(() => {
-        vi.clearAllMocks();
+        mockRequest.mockReset();
     });
 
     afterEach(() => {
-        vi.clearAllMocks();
+        vi.restoreAllMocks();
     });
 
-    it('should return result if promise resolves before timeout', async () => {
-        const fastPromise = Promise.resolve('success');
+    it('calls HttpClient.request with POST and form-urlencoded body', async () => {
+        mockRequest.mockResolvedValue({ status: 200, data: mockQuotaResponse });
 
-        const result = await withTimeout(fastPromise, 1000, 'test-operation');
+        const result = await fetchQuotaInfo(mockCredentials);
 
-        expect(result).toBe('success');
-    });
-
-    it('should throw timeout error if promise takes too long', async () => {
-        const slowPromise = new Promise(resolve => {
-            setTimeout(() => resolve('slow-result'), 2000);
-        });
-
-        await expect(withTimeout(slowPromise, 100, 'test-operation')).rejects.toThrow(
-            'test-operation timed out after 100ms'
+        expect(mockRequest).toHaveBeenCalledWith(
+            expect.objectContaining({
+                url: BAILIAN_API_URL,
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+            })
         );
+        // Verify rawBody is form-urlencoded (not JSON-wrapped)
+        const callArg = mockRequest.mock.calls[0][0] as Record<string, unknown>;
+        const rawBody = callArg.rawBody as string;
+        expect(rawBody).toContain('params=');
+        expect(rawBody).toContain('&region=');
+        expect(rawBody).toContain('&sec_token=');
     });
 
-    it('should clear timeout after completion', async () => {
-        const fastPromise = Promise.resolve('success');
+    it('returns parsed CodingPlanQuotaInfo', async () => {
+        mockRequest.mockResolvedValue({ status: 200, data: mockQuotaResponse });
 
-        await withTimeout(fastPromise, 1000, 'test-operation');
+        const result = await fetchQuotaInfo(mockCredentials);
 
-        // No explicit verification needed - if timeout wasn't cleared,
-        // it would cause issues in subsequent tests
-        expect(true).toBe(true);
-    });
-});
-
-describe('constants', () => {
-    it('should have correct API_TIMEOUT value (1000)', () => {
-        expect(API_TIMEOUT).toBe(1000);
+        expect(result.per5HourUsedQuota).toBe(50);
+        expect(result.perWeekUsedQuota).toBe(400);
+        expect(result.perBillMonthUsedQuota).toBe(1500);
     });
 
-    it('should have correct ENDPOINT value', () => {
-        expect(ENDPOINT).toBe('cms.cn-hangzhou.aliyuncs.com');
-    });
+    it('creates HttpClient with cookie auth', async () => {
+        mockRequest.mockResolvedValue({ status: 200, data: mockQuotaResponse });
 
-    it('should have correct NAMESPACE value (acs_bailian)', () => {
-        expect(NAMESPACE).toBe('acs_bailian');
-    });
+        await fetchQuotaInfo(mockCredentials);
 
-    it('should have correct METRIC_NAME value (CallCount)', () => {
-        expect(METRIC_NAME).toBe('CallCount');
-    });
-
-    it('should have correct PERIOD value (300)', () => {
-        expect(PERIOD).toBe('300');
+        // HttpClient constructor was called with cookie auth
+        const httpClient = new HttpClient({
+            auth: { type: 'cookie', value: mockCredentials.cookie },
+        });
+        expect(httpClient).toBeDefined();
     });
 });
