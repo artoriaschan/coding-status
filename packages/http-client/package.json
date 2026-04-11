@@ -1,0 +1,36 @@
+{
+    "name": "@coding-status/http-client",
+    "version": "0.0.1",
+    "description": "Reusable HTTP client with timeout, retry, auth injection, and error parsing for coding-status",
+    "type": "module",
+    "main": "./dist/index.js",
+    "types": "./types/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./types/index.d.ts",
+            "import": "./dist/index.js",
+            "default": "./dist/index.js"
+        }
+    },
+    "files": [
+        "dist",
+        "types"
+    ],
+    "scripts": {
+        "build": "tsup && tsc -p tsconfig.build.json",
+        "prepublishOnly": "pnpm build"
+    },
+    "devDependencies": {
+        "@types/node": "^20.11.0",
+        "tsup": "^8.5.1",
+        "tsx": "^4.21.0",
+        "typescript": "^5.4.2",
+        "vitest": "^4.1.4"
+    },
+    "keywords": [
+        "coding-status",
+        "http-client",
+        "fetch"
+    ],
+    "license": "MIT"
+}
