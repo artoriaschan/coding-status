@@ -12,6 +12,10 @@ export default defineConfig({
                 __dirname,
                 'packages/widget-renderer/src/settings.schema.ts'
             ),
+            '@coding-status/http-client': path.resolve(
+                __dirname,
+                'packages/http-client/src/index.ts'
+            ),
         },
     },
     test: {
