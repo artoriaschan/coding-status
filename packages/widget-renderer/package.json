@@ -4,21 +4,22 @@
     "description": "Coding Status Widget rendering library - statusline widget components",
     "type": "module",
     "main": "./dist/index.js",
-    "types": "./dist/index.d.ts",
+    "types": "./types/index.d.ts",
     "exports": {
         ".": {
-            "types": "./dist/index.d.ts",
+            "types": "./types/index.d.ts",
             "import": "./dist/index.js",
             "default": "./dist/index.js"
         },
         "./settings.schema": {
-            "types": "./dist/settings.schema.d.ts",
+            "types": "./types/settings.schema.d.ts",
             "import": "./dist/settings.schema.js",
             "default": "./dist/settings.schema.js"
         }
     },
     "files": [
         "dist",
+        "types",
         "schemas"
     ],
     "contributes": {
@@ -33,7 +34,7 @@
         ]
     },
     "scripts": {
-        "build": "tsc",
+        "build": "tsup && tsc -p tsconfig.build.json",
         "prepublishOnly": "pnpm build"
     },
     "dependencies": {
@@ -42,6 +43,7 @@
     },
     "devDependencies": {
         "@types/node": "^20.11.0",
+        "tsup": "^8.5.1",
         "tsx": "^4.21.0",
         "typescript": "^5.4.2",
         "zod-to-json-schema": "^3.25.2"
