@@ -45,6 +45,60 @@ describe('HttpClient', () => {
         });
     });
 
+    // --- Request Body ---
+    describe('request body', () => {
+        it('sends JSON body by default', async () => {
+            mockFetch.mockResolvedValue(
+                new Response(JSON.stringify({ ok: true }), { status: 200 })
+            );
+
+            const client = new HttpClient();
+            await client.post('https://example.com/api', { name: 'Alice' });
+
+            const callArgs = mockFetch.mock.calls[0];
+            expect(callArgs[1]?.method).toBe('POST');
+            expect(callArgs[1]?.body).toBe('{"name":"Alice"}');
+            const headers = callArgs[1]?.headers as Record<string, string>;
+            expect(headers['Content-Type']).toBe('application/json');
+        });
+
+        it('uses rawBody directly without JSON serialization', async () => {
+            mockFetch.mockResolvedValue(
+                new Response(JSON.stringify({ ok: true }), { status: 200 })
+            );
+
+            const client = new HttpClient();
+            await client.request({
+                url: 'https://example.com/form',
+                method: 'POST',
+                rawBody: 'foo=bar&baz=qux',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            });
+
+            const callArgs = mockFetch.mock.calls[0];
+            expect(callArgs[1]?.body).toBe('foo=bar&baz=qux');
+            const headers = callArgs[1]?.headers as Record<string, string>;
+            expect(headers['Content-Type']).toBe('application/x-www-form-urlencoded');
+        });
+
+        it('does NOT set JSON Content-Type when rawBody is used', async () => {
+            mockFetch.mockResolvedValue(
+                new Response(JSON.stringify({ ok: true }), { status: 200 })
+            );
+
+            const client = new HttpClient();
+            await client.request({
+                url: 'https://example.com/form',
+                method: 'POST',
+                rawBody: 'foo=bar',
+            });
+
+            const callArgs = mockFetch.mock.calls[0];
+            const headers = callArgs[1]?.headers as Record<string, string>;
+            expect(headers['Content-Type']).toBeUndefined();
+        });
+    });
+
     // --- Auth Injection ---
     describe('auth injection', () => {
         it('sets Authorization header for bearer auth', async () => {

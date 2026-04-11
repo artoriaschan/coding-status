@@ -48,6 +48,9 @@ export interface HttpRequestOptions {
     /** Request body -- serialized as JSON if provided */
     body?: unknown;
 
+    /** Raw body string — bypasses JSON serialization when set */
+    rawBody?: string;
+
     /** Additional headers -- merged with auth headers */
     headers?: Record<string, string>;
 }

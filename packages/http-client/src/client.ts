@@ -117,7 +117,7 @@ export class HttpClient {
         options: HttpRequestOptions,
         timeoutMs: number
     ): Promise<HttpResponse<T>> {
-        const { url, method = 'GET', body } = options;
+        const { url, method = 'GET', body, rawBody } = options;
 
         // Build headers: constructor headers + per-call headers + auth headers
         const headers = this.buildHeaders(options.headers);
@@ -129,7 +129,9 @@ export class HttpClient {
             headers,
         };
 
-        if (body !== undefined && body !== null) {
+        if (rawBody !== undefined) {
+            init.body = rawBody;
+        } else if (body !== undefined && body !== null) {
             init.body = JSON.stringify(body);
             if (!headers['Content-Type']) {
                 headers['Content-Type'] = 'application/json';
