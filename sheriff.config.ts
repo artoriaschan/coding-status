@@ -19,6 +19,8 @@ export const sheriffConfig: SheriffConfig = {
         'packages/cli/src/types': 'domain:types',
         'packages/usage-adapter-bailian/src/types': 'domain:types',
 
+        'packages/http-client/src/types': 'domain:types',
+
         // Core layer - widget-renderer (base rendering layer)
         'packages/widget-renderer/src': 'core:widgets',
         'packages/widget-renderer/src/widgets': 'core:widgets',
@@ -47,6 +49,8 @@ export const sheriffConfig: SheriffConfig = {
         'packages/cli/__tests__/scripts': 'test:cli',
         'packages/widget-renderer/__tests__': 'test:widgets',
         'packages/usage-adapter-bailian/__tests__': 'test:bailian',
+        'packages/http-client/src': 'core:http-client',
+        'packages/http-client/__tests__': 'test:http-client',
     },
     depRules: {
         // Domain layer: types can only import external packages
@@ -66,6 +70,8 @@ export const sheriffConfig: SheriffConfig = {
         'test:cli': ['domain:*', 'core:*', 'feature:*', 'test:cli', 'external:*'],
         'test:widgets': ['domain:*', 'core:*', 'feature:*', 'test:widgets', 'external:*'],
         'test:bailian': ['domain:*', 'core:*', 'feature:*', 'test:bailian', 'external:*'],
+        'core:http-client': ['domain:types', 'core:http-client', 'external:*'],
+        'test:http-client': ['domain:*', 'core:*', 'feature:*', 'test:http-client', 'external:*'],
 
         // Untagged files: can import anything (permissive for flexibility)
         noTag: ['domain:*', 'core:*', 'feature:*', 'noTag', 'external:*'],
