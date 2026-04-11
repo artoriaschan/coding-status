@@ -10,7 +10,7 @@
 import type { UsageAdapter, UsageDimension } from '@coding-status/widget-renderer';
 import { AdapterInitError } from '@coding-status/cli';
 import { fetchQuotaInfo } from './client.js';
-import { DIMENSIONS, getTimeRange, isValidDimension } from './dimensions.js';
+import { DIMENSIONS, isValidDimension } from './dimensions.js';
 import { loadCache, saveCache } from './cache.js';
 import { getCircuitBreaker } from './circuit-breaker.js';
 
@@ -64,7 +64,7 @@ export const BailianAdapter: UsageAdapter = {
      * Per D-11: calls DescribeMetricList to validate credentials (query last 1 hour).
      * Per D-13: throws AdapterInitError with structured message on failure.
      *
-     * @param credentials - Provider credentials (accessKeyId, accessKeySecret)
+     * @param credentials - Provider credentials (cookie, sec_token, region)
      * @throws AdapterInitError if validation fails
      */
     async init(credentials: Record<string, string>): Promise<void> {
