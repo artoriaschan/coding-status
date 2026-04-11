@@ -9,7 +9,7 @@
 
 import type { UsageAdapter, UsageDimension } from '@coding-status/widget-renderer';
 import { AdapterInitError } from '@coding-status/cli';
-import { createClient, fetchCallCount, withTimeout, API_TIMEOUT } from './client.js';
+import { fetchQuotaInfo } from './client.js';
 import { DIMENSIONS, getTimeRange, isValidDimension } from './dimensions.js';
 import { loadCache, saveCache } from './cache.js';
 import { getCircuitBreaker } from './circuit-breaker.js';
@@ -23,7 +23,7 @@ import { getCircuitBreaker } from './circuit-breaker.js';
  */
 interface BailianConfig {
     providerName: string;
-    credentials: { accessKeyId: string; accessKeySecret: string };
+    credentials: { cookie: string; sec_token: string; region: string };
     cacheTtl: number;
 }
 
@@ -33,9 +33,6 @@ interface BailianConfig {
 
 /** Adapter configuration (set after init) */
 let config: BailianConfig | null = null;
-
-/** SDK client instance (set after init) */
-let client: Awaited<ReturnType<typeof createClient>> | null = null;
 
 /** Provider name for cache and circuit breaker */
 const PROVIDER_NAME = 'bailian';
@@ -50,8 +47,8 @@ const DEFAULT_CACHE_TTL = 300;
 /**
  * Bailian Usage Adapter
  *
- * Implements UsageAdapter interface for Aliyun Bailian CallCount metrics.
- * Uses DescribeMetricList API to fetch usage data.
+ * Implements UsageAdapter interface for Aliyun Bailian quota metrics.
+ * Uses queryCodingPlanInstanceInfoV2 console API via http-client.
  */
 export const BailianAdapter: UsageAdapter = {
     // Per D-12: name is 'bailian'
@@ -71,57 +68,40 @@ export const BailianAdapter: UsageAdapter = {
      * @throws AdapterInitError if validation fails
      */
     async init(credentials: Record<string, string>): Promise<void> {
-        // Validate credential structure (per D-12)
-        const accessKeyId = credentials.accessKeyId;
-        const accessKeySecret = credentials.accessKeySecret;
+        // Validate credential structure (per D-05)
+        const cookie = credentials.cookie;
+        const sec_token = credentials.sec_token;
+        const region = credentials.region || 'cn-hangzhou';
 
-        if (!accessKeyId || accessKeyId.trim() === '') {
+        if (!cookie || cookie.trim() === '') {
             throw new AdapterInitError(
                 '@coding-status/usage-adapter-bailian',
-                'Missing accessKeyId in credentials'
+                'Missing cookie in credentials. Please copy your browser cookie from DevTools and update your config.'
             );
         }
 
-        if (!accessKeySecret || accessKeySecret.trim() === '') {
+        if (!sec_token || sec_token.trim() === '') {
             throw new AdapterInitError(
                 '@coding-status/usage-adapter-bailian',
-                'Missing accessKeySecret in credentials'
+                'Missing sec_token in credentials. Please provide your sec_token value.'
             );
         }
 
-        // Create SDK client
+        // Validate by calling the API (per D-09)
         try {
-            client = await createClient({ accessKeyId, accessKeySecret });
-        } catch (error) {
-            const reason = error instanceof Error ? error.message : 'Client creation failed';
-            throw new AdapterInitError(
-                '@coding-status/usage-adapter-bailian',
-                `Failed to create SDK client: ${reason}`
-            );
-        }
-
-        // Validate credentials by querying last 1 hour (per D-11)
-        const now = Date.now();
-        const oneHourAgo = now - 60 * 60 * 1000;
-
-        try {
-            await withTimeout(
-                fetchCallCount(client, oneHourAgo, now),
-                API_TIMEOUT,
-                'Credential validation'
-            );
+            await fetchQuotaInfo({ cookie, sec_token, region });
         } catch (error) {
             const reason = error instanceof Error ? error.message : 'API validation failed';
             throw new AdapterInitError(
                 '@coding-status/usage-adapter-bailian',
-                `Credential validation failed: ${reason}`
+                `Cookie validation failed: ${reason}. Please re-copy your browser cookie from DevTools.`
             );
         }
 
         // Store configuration
         config = {
             providerName: PROVIDER_NAME,
-            credentials: { accessKeyId, accessKeySecret },
+            credentials: { cookie, sec_token, region },
             cacheTtl: DEFAULT_CACHE_TTL,
         };
     },
@@ -150,7 +130,7 @@ export const BailianAdapter: UsageAdapter = {
      */
     async getUsage(dimension: string): Promise<number> {
         // Check initialized
-        if (!config || !client) {
+        if (!config) {
             throw new Error('BailianAdapter not initialized. Call init() first.');
         }
 
@@ -192,14 +172,18 @@ export const BailianAdapter: UsageAdapter = {
         }
 
         // Fetch from API
-        const { startTimeMs, endTimeMs } = getTimeRange(dimension);
-
         try {
-            const usage = await withTimeout(
-                fetchCallCount(client, startTimeMs, endTimeMs),
-                API_TIMEOUT,
-                `Fetch ${dimension} usage`
-            );
+            const quotaInfo = await fetchQuotaInfo(config.credentials);
+
+            // Map dimension to quota field (per D-08: no aggregation needed)
+            let usage: number;
+            if (dimension === '5h') {
+                usage = quotaInfo.per5HourUsedQuota;
+            } else if (dimension === 'week') {
+                usage = quotaInfo.perWeekUsedQuota;
+            } else {
+                usage = quotaInfo.perBillMonthUsedQuota;
+            }
 
             // Record success
             circuitBreaker.recordSuccess(config.providerName);
