@@ -42,3 +42,6 @@ Thumbs.db
 # .changeset/*.md  (uncomment to ignore generated changeset files)
 
 .npmrc
+
+# GSD planning artifacts
+.planning/
